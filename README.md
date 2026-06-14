@@ -19,9 +19,23 @@ Flyten er fullstendig på klientsiden. For ekte bookinger kan steg 3–4 kobles 
 et backend-/kalender-API (f.eks. Timma) i `app.js` (`renderConfirmStep`).
 
 ## Bilder
-Hundebildene er generert med Higgsfield og refereres via CDN-URL i `index.html`
-og `styles.css`. Ønsker du dem lokalt i repoet, last dem ned til `assets/img/`
-og bytt ut CDN-URL-ene (krever at CDN-verten er tillatt i nettverkspolicyen).
+Hundebildene er generert med Higgsfield og ligger lokalt i `assets/img/`.
+Selve bildefilene er ikke sjekket inn (de hentes fra Higgsfields CDN). Last dem
+ned én gang med skriptet under, så vises de lokalt:
+
+```bash
+bash scripts/fetch-images.sh
+git add assets/img && git commit -m "Legg til lokale hundebilder" && git push
+```
+
+Inntil bildene er lastet ned, faller `<img>`-taggene automatisk tilbake til
+CDN-URL (via `onerror`), slik at siden aldri vises med ødelagte bilder.
+
+Bildefiler:
+- `hero-bichon.png` – hero (nyklippet liten hund)
+- `brushing.png` – om oss (børsting)
+- `towel-cockapoo.png` – om oss (hund i håndkle)
+- `golden-happy.png` – CTA-banner (glad hund)
 
 ## Kjøre lokalt
 Åpne `index.html` i en nettleser, eller kjør en enkel server:
