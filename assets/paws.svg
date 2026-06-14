@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Potemønster">
+  <defs>
+    <g id="paw">
+      <ellipse cx="0" cy="6" rx="8" ry="10"/>
+      <ellipse cx="-11" cy="-7" rx="3.4" ry="5"/>
+      <ellipse cx="-4" cy="-12" rx="3.4" ry="5"/>
+      <ellipse cx="4" cy="-12" rx="3.4" ry="5"/>
+      <ellipse cx="11" cy="-7" rx="3.4" ry="5"/>
+    </g>
+  </defs>
+  <g fill="#2f5a44">
+    <use href="#paw" transform="translate(24 28) rotate(-15) scale(.9)"/>
+    <use href="#paw" transform="translate(88 22) rotate(20) scale(.7)"/>
+    <use href="#paw" transform="translate(58 60) rotate(0) scale(1.05)"/>
+    <use href="#paw" transform="translate(20 92) rotate(18) scale(.65)"/>
+    <use href="#paw" transform="translate(94 90) rotate(-12) scale(.85)"/>
+  </g>
+</svg>

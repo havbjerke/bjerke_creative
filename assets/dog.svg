@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320" role="img" aria-label="Vennlig hund">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e4efe8"/>
+      <stop offset="1" stop-color="#d6e6dc"/>
+    </linearGradient>
+    <linearGradient id="coat" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#efe2c9"/>
+      <stop offset="1" stop-color="#e3d2b1"/>
+    </linearGradient>
+    <linearGradient id="ear" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#caa873"/>
+      <stop offset="1" stop-color="#b8965f"/>
+    </linearGradient>
+  </defs>
+
+  <!-- backdrop -->
+  <circle cx="160" cy="160" r="156" fill="url(#bg)"/>
+
+  <!-- ears -->
+  <path d="M84 96 C52 108 44 168 70 210 C92 188 100 150 108 124 Z" fill="url(#ear)"/>
+  <path d="M236 96 C268 108 276 168 250 210 C228 188 220 150 212 124 Z" fill="url(#ear)"/>
+
+  <!-- head -->
+  <ellipse cx="160" cy="158" rx="84" ry="76" fill="url(#coat)"/>
+
+  <!-- muzzle -->
+  <ellipse cx="160" cy="196" rx="50" ry="40" fill="#f6efe0"/>
+
+  <!-- cheeks blush -->
+  <circle cx="112" cy="186" r="13" fill="#e9b9a3" opacity=".55"/>
+  <circle cx="208" cy="186" r="13" fill="#e9b9a3" opacity=".55"/>
+
+  <!-- eyes -->
+  <circle cx="126" cy="146" r="12" fill="#2f5a44"/>
+  <circle cx="194" cy="146" r="12" fill="#2f5a44"/>
+  <circle cx="130" cy="142" r="4" fill="#fff"/>
+  <circle cx="198" cy="142" r="4" fill="#fff"/>
+
+  <!-- nose -->
+  <ellipse cx="160" cy="178" rx="15" ry="11" fill="#2f5a44"/>
+  <ellipse cx="155" cy="175" rx="4" ry="3" fill="#7ba08b"/>
+
+  <!-- mouth -->
+  <path d="M160 189 L160 202 M160 202 C146 216 132 210 128 200 M160 202 C174 216 188 210 192 200"
+        fill="none" stroke="#2f5a44" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- tongue -->
+  <path d="M150 208 C150 224 170 224 170 208 Z" fill="#e98b8b"/>
+
+  <!-- top tuft -->
+  <path d="M160 82 C150 70 148 58 160 50 C172 58 170 70 160 82 Z" fill="url(#ear)"/>
+</svg>

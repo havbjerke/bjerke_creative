@@ -101,10 +101,19 @@ a { color: inherit; text-decoration: none; }
 .hero-trust .stars { font-size: 1.1rem; }
 
 .hero-visual { position: relative; }
-.hero-img {
-  width: 100%; aspect-ratio: 4 / 3.4; object-fit: cover;
-  border-radius: 26px; box-shadow: var(--shadow-lg); border: 1px solid var(--line); display: block;
+.hero-illus {
+  position: relative; width: 100%; aspect-ratio: 4 / 3.6;
+  border-radius: 26px; box-shadow: var(--shadow-lg); border: 1px solid var(--line);
+  background:
+    url("assets/paws.svg") top 18px right 22px / 120px no-repeat,
+    radial-gradient(120% 120% at 30% 20%, #eef5f0 0%, #dbe9e0 55%, #cfe0d5 100%);
+  display: grid; place-items: center; overflow: hidden;
 }
+.hero-illus::after {
+  content: ""; position: absolute; bottom: -40px; left: -40px; width: 160px; height: 160px;
+  background: url("assets/paws.svg") center / contain no-repeat; opacity: .12; transform: rotate(12deg);
+}
+.hero-illus img { width: 72%; max-width: 280px; height: auto; filter: drop-shadow(0 12px 24px rgba(31,58,46,.18)); position: relative; z-index: 1; }
 .hero-visual .hero-card {
   position: absolute; left: -18px; bottom: -22px; width: min(280px, 80%);
 }
@@ -122,10 +131,23 @@ a { color: inherit; text-decoration: none; }
 
 /* ===== About ===== */
 .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 5vw, 4.5rem); align-items: center; }
-.about-media { position: relative; min-height: 380px; }
-.about-img { border-radius: 20px; box-shadow: var(--shadow-md); border: 1px solid var(--line); object-fit: cover; display: block; }
-.about-img-1 { width: 72%; aspect-ratio: 1; }
-.about-img-2 { position: absolute; right: 0; bottom: -10px; width: 52%; aspect-ratio: 4/5; border: 4px solid var(--cream); }
+.about-media { position: relative; }
+.about-illus {
+  position: relative; border-radius: 24px; aspect-ratio: 5 / 4; display: grid; place-items: center;
+  box-shadow: var(--shadow-md); border: 1px solid var(--line); overflow: hidden;
+  background:
+    url("assets/paws.svg") bottom 16px left 18px / 96px no-repeat,
+    radial-gradient(120% 120% at 70% 25%, #f3ede1 0%, #ece3d2 60%, #e3d8c2 100%);
+}
+.about-illus img { width: 58%; max-width: 240px; height: auto; filter: drop-shadow(0 12px 24px rgba(31,58,46,.16)); }
+.about-badge {
+  position: absolute; right: -8px; bottom: -14px; background: var(--white);
+  border: 1px solid var(--line); border-radius: 999px; padding: .6rem 1.1rem;
+  box-shadow: var(--shadow-md); font-size: .9rem; font-weight: 600; color: var(--ink);
+  display: flex; align-items: center; gap: .5rem;
+}
+.about-badge .stars { font-size: .95rem; }
+.about-badge strong { color: var(--green-700); }
 .about-copy .eyebrow { margin-bottom: .9rem; }
 .about-copy h2 { font-size: clamp(1.7rem, 3.2vw, 2.4rem); color: var(--green-900); margin-bottom: 1rem; }
 .about-copy p { color: var(--muted); margin: 0 0 1.4rem; }
@@ -134,7 +156,20 @@ a { color: inherit; text-decoration: none; }
 .about-points li span { flex: 0 0 auto; }
 
 /* ===== CTA band ===== */
-.cta-band { background-size: cover; background-position: center; color: var(--white); padding: clamp(3.5rem, 7vw, 5.5rem) 0; text-align: center; }
+.cta-band {
+  position: relative; color: var(--white); padding: clamp(3.5rem, 7vw, 5.5rem) 0; text-align: center; overflow: hidden;
+  background:
+    radial-gradient(800px 400px at 80% -20%, rgba(255,255,255,.10), transparent 60%),
+    linear-gradient(135deg, var(--green-700) 0%, var(--green-900) 100%);
+}
+.cta-band::before, .cta-band::after {
+  content: ""; position: absolute; width: 180px; height: 180px;
+  background: url("assets/paws.svg") center / contain no-repeat; opacity: .10;
+  filter: brightness(0) invert(1);
+}
+.cta-band::before { top: -30px; left: -20px; transform: rotate(-12deg); }
+.cta-band::after { bottom: -40px; right: -10px; transform: rotate(16deg); }
+.cta-inner { position: relative; z-index: 1; }
 .cta-inner h2 { font-size: clamp(1.8rem, 3.5vw, 2.6rem); margin-bottom: .6rem; }
 .cta-inner p { opacity: .9; margin: 0 0 1.6rem; font-size: 1.05rem; }
 .cta-btn { background: var(--white); color: var(--green-900); }

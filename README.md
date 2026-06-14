@@ -18,24 +18,14 @@ Bookingen ligger direkte i nettsiden (Timma-stil) og kjører som en 4-stegs flyt
 Flyten er fullstendig på klientsiden. For ekte bookinger kan steg 3–4 kobles til
 et backend-/kalender-API (f.eks. Timma) i `app.js` (`renderConfirmStep`).
 
-## Bilder
-Hundebildene er generert med Higgsfield og ligger lokalt i `assets/img/`.
-Selve bildefilene er ikke sjekket inn (de hentes fra Higgsfields CDN). Last dem
-ned én gang med skriptet under, så vises de lokalt:
+## Bilder / grafikk
+Nettsiden er helt selvstendig og bruker ingen eksterne bilder. Grafikken er
+egendefinerte SVG-illustrasjoner som ligger lokalt i `assets/`:
+- `dog.svg` – vennlig hundeillustrasjon (hero og «om oss»)
+- `paws.svg` – potemønster brukt som dekor i hero, «om oss» og CTA-banner
 
-```bash
-bash scripts/fetch-images.sh
-git add assets/img && git commit -m "Legg til lokale hundebilder" && git push
-```
-
-Inntil bildene er lastet ned, faller `<img>`-taggene automatisk tilbake til
-CDN-URL (via `onerror`), slik at siden aldri vises med ødelagte bilder.
-
-Bildefiler:
-- `hero-bichon.png` – hero (nyklippet liten hund)
-- `brushing.png` – om oss (børsting)
-- `towel-cockapoo.png` – om oss (hund i håndkle)
-- `golden-happy.png` – CTA-banner (glad hund)
+Vil du heller bruke ekte foto senere, kan `assets/dog.svg`-referansene i
+`index.html` byttes ut med dine egne bildefiler i `assets/`.
 
 ## Kjøre lokalt
 Åpne `index.html` i en nettleser, eller kjør en enkel server:
