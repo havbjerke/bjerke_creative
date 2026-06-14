@@ -158,13 +158,6 @@ const $ = (sel, root = document) => root.querySelector(sel);
 const fmtPrice = (n) => n.toLocaleString("no-NO") + " kr";
 const DOW = ["søn", "man", "tir", "ons", "tor", "fre", "lør"];
 const MON = ["jan", "feb", "mar", "apr", "mai", "jun", "jul", "aug", "sep", "okt", "nov", "des"];
-const pad = (n) => String(n).padStart(2, "0");
-
-/* ---------- Betaling (Vipps) ---------- */
-const PAYMENT = {
-  enabled: true, // sett false for booking uten betaling
-  apiBase: "",   // tom = samme domene (Vercel). Sett full URL hvis backend ligger annet sted.
-};
 
 /* Pseudo-random but stable "next available" label per service */
 function nextTimeLabel(idx) {
@@ -247,7 +240,7 @@ function renderReviews() {
 /* =========================================================
    Booking system
    ========================================================= */
-const booking = { step: 1, service: null, date: null, time: null, customer: {}, reference: null, paymentState: null };
+const booking = { step: 1, service: null, date: null, time: null, customer: {} };
 
 const modal = $("#booking-modal");
 const body = $("#booking-body");
@@ -258,8 +251,6 @@ function openBooking(serviceId) {
   booking.date = null;
   booking.time = null;
   booking.customer = {};
-  booking.reference = null;
-  booking.paymentState = null;
   if (booking.service) booking.step = 2; // jump straight to time pick if service preselected
   modal.classList.add("is-open");
   modal.setAttribute("aria-hidden", "false");
@@ -302,8 +293,7 @@ function renderStep() {
   if (booking.step === 1) renderServiceStep();
   else if (booking.step === 2) renderTimeStep();
   else if (booking.step === 3) renderDetailsStep();
-  else if (booking.step === 4) renderPaymentStep();
-  else if (booking.step === 5) renderConfirmStep(booking.reference, booking.paymentState);
+  else if (booking.step === 4) renderConfirmStep();
   body.parentElement.scrollTop = 0;
 }
 
@@ -391,7 +381,7 @@ function renderDetailsStep() {
     </div>
     <div class="bk-nav">
       <button class="btn btn-ghost" data-goto="2">Tilbake</button>
-      <button class="btn btn-primary" data-submit-details>${PAYMENT.enabled ? "Til betaling" : "Se oppsummering"}</button>
+      <button class="btn btn-primary" data-submit-details>Se oppsummering</button>
     </div>`;
 }
 
@@ -417,183 +407,32 @@ function validateDetails() {
   return ok;
 }
 
-/* Step 4 – payment (Vipps) */
-function renderPaymentStep() {
+/* Step 4 – confirmation */
+function renderConfirmStep() {
   const s = booking.service;
-  body.innerHTML = `
-    <h3 class="step-title">Betaling</h3>
-    <p class="step-sub">Fullfør bookingen med Vipps.</p>
-    ${summaryBanner()}
-    <div class="bk-pay">
-      <div class="bk-pay-total">
-        <span>Å betale</span>
-        <strong>${fmtPrice(s.price)}</strong>
-      </div>
-      <button class="btn btn-vipps btn-block" data-pay-vipps>
-        <span class="vipps-logo">vipps</span>
-        <span>Betal ${fmtPrice(s.price)}</span>
-      </button>
-      <p class="bk-pay-note">🔒 Du sendes til Vipps for å bekrefte. Trygt og kryptert.</p>
-      <div class="bk-pay-error" id="pay-error"></div>
-    </div>
-    <div class="bk-nav">
-      <button class="btn btn-ghost" data-goto="3">Tilbake</button>
-    </div>`;
-}
-
-async function startVippsPayment() {
-  const s = booking.service;
-  const btn = document.querySelector("[data-pay-vipps]");
-  const errEl = document.getElementById("pay-error");
-  if (!btn) return;
-  errEl.textContent = "";
-  const original = btn.innerHTML;
-  btn.disabled = true;
-  btn.innerHTML = "Starter Vipps …";
-  try {
-    const returnUrl = location.origin + location.pathname;
-    const resp = await fetch((PAYMENT.apiBase || "") + "/api/vipps/create", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        amount: s.price,
-        serviceName: s.name,
-        phone: booking.customer.phone,
-        returnUrl,
-      }),
-    });
-    if (!resp.ok) throw new Error("Serveren svarte " + resp.status);
-    const data = await resp.json();
-    if (!data.redirectUrl) throw new Error("Mangler redirectUrl fra Vipps");
-    persistBooking(data.reference);
-    window.location.href = data.redirectUrl; // videre til Vipps
-  } catch (e) {
-    btn.disabled = false;
-    btn.innerHTML = original;
-    errEl.innerHTML =
-      "Betaling er ikke tilgjengelig her. Dette krever at backend (Vipps) er satt opp og utrullet " +
-      "(se README). <br><small>Detaljer: " + (e.message || e) + "</small>";
-  }
-}
-
-/* Lagre booking lokalt så vi kan vise kvittering etter retur fra Vipps */
-function persistBooking(reference) {
-  try {
-    localStorage.setItem("agm_last_reference", reference);
-    localStorage.setItem("agm_booking_" + reference, JSON.stringify({
-      serviceId: booking.service.id,
-      date: booking.date ? booking.date.toISOString() : null,
-      time: booking.time,
-      customer: booking.customer,
-    }));
-  } catch (e) { /* localStorage utilgjengelig – ignorer */ }
-}
-
-/* Step 5 – confirmation (etter betaling) */
-function renderConfirmStep(reference, state) {
-  const success = state === "CAPTURED" || state === "AUTHORIZED" || state === "NONE";
-  const s = booking.service;
-  const c = booking.customer || {};
-
-  if (!success) {
-    const labels = { ABORTED: "Avbrutt i Vipps", EXPIRED: "Utløpt", TERMINATED: "Avbrutt", PENDING: "Ikke bekreftet ennå" };
-    body.innerHTML = `
-      <div class="bk-confirm">
-        <div class="bk-check bk-check-fail">!</div>
-        <h3 class="step-title">Betalingen ble ikke fullført</h3>
-        <p class="step-sub">${labels[state] || "Status: " + state}. Ingen penger er trukket – du kan prøve igjen.</p>
-        <div class="bk-nav">
-          <button class="btn btn-primary btn-block" data-book-open>Prøv på nytt</button>
-        </div>
-      </div>`;
-    return;
-  }
-
-  const when = booking.date && booking.time
-    ? `${DOW[booking.date.getDay()]} ${pad(booking.date.getDate())}.${MON[booking.date.getMonth()]}.${booking.date.getFullYear()} kl. ${booking.time}`
-    : "—";
-  const paidRow = state === "NONE"
-    ? `<div class="bk-receipt-row"><span class="lbl">Betaling</span><span class="val">Betales i salongen</span></div>`
-    : `<div class="bk-receipt-row"><span class="lbl">Betalt med</span><span class="val">Vipps ✓</span></div>`;
-  const firstName = (c.name || "").split(" ")[0] || "";
+  const c = booking.customer;
+  const when = `${DOW[booking.date.getDay()]} ${String(booking.date.getDate()).padStart(2, "0")}.${MON[booking.date.getMonth()]}.${booking.date.getFullYear()} kl. ${booking.time}`;
+  const ref = "AGM-" + Math.random().toString(36).slice(2, 7).toUpperCase();
 
   body.innerHTML = `
     <div class="bk-confirm">
       <div class="bk-check">✓</div>
       <h3 class="step-title">Timen er booket!</h3>
-      <p class="step-sub">Takk${firstName ? ", " + firstName : ""}! Vi gleder oss til å ta imot ${c.dog ? c.dog : "dere"}.</p>
+      <p class="step-sub">Takk, ${c.name.split(" ")[0]}! Vi gleder oss til å ta imot ${c.dog ? c.dog : "dere"}.</p>
       <div class="bk-receipt">
-        ${s ? `<div class="bk-receipt-row"><span class="lbl">Tjeneste</span><span class="val">${s.name}</span></div>` : ""}
+        <div class="bk-receipt-row"><span class="lbl">Tjeneste</span><span class="val">${s.name}</span></div>
         <div class="bk-receipt-row"><span class="lbl">Tid</span><span class="val">${when}</span></div>
         <div class="bk-receipt-row"><span class="lbl">Utøver</span><span class="val">Torild</span></div>
         <div class="bk-receipt-row"><span class="lbl">Sted</span><span class="val">Meieriveien 2, Mysen</span></div>
         ${c.dog ? `<div class="bk-receipt-row"><span class="lbl">Hund</span><span class="val">${c.dog}</span></div>` : ""}
-        ${paidRow}
-        <div class="bk-receipt-row"><span class="lbl">Referanse</span><span class="val">${reference || "—"}</span></div>
-        ${s ? `<div class="bk-receipt-row"><span class="lbl">Beløp</span><span class="val bk-receipt-total">${fmtPrice(s.price)}</span></div>` : ""}
+        <div class="bk-receipt-row"><span class="lbl">Referanse</span><span class="val">${ref}</span></div>
+        <div class="bk-receipt-row"><span class="lbl">Pris</span><span class="val bk-receipt-total">${fmtPrice(s.price)}</span></div>
       </div>
       <p class="bk-note">En bekreftelse sendes til ${c.email ? c.email : "telefonen din"}. Trenger du å endre timen, ta kontakt med oss.</p>
       <div class="bk-nav">
         <button class="btn btn-primary btn-block" data-book-close>Ferdig</button>
       </div>
     </div>`;
-}
-
-/* ---------- Retur fra Vipps ---------- */
-async function pollPaymentStatus(reference, attempts = 8) {
-  const terminal = ["CAPTURED", "AUTHORIZED", "ABORTED", "EXPIRED", "TERMINATED"];
-  for (let i = 0; i < attempts; i++) {
-    try {
-      const r = await fetch((PAYMENT.apiBase || "") + "/api/vipps/status?reference=" + encodeURIComponent(reference));
-      if (r.ok) {
-        const d = await r.json();
-        if (terminal.includes(d.state)) return d.state;
-      }
-    } catch (e) { /* prøv igjen */ }
-    await new Promise((res) => setTimeout(res, 1500));
-  }
-  return "PENDING";
-}
-
-function restoreBooking(reference) {
-  try {
-    const raw = localStorage.getItem("agm_booking_" + reference);
-    if (!raw) return;
-    const b = JSON.parse(raw);
-    booking.service = SERVICE_BY_ID[b.serviceId] || null;
-    booking.date = b.date ? new Date(b.date) : null;
-    booking.time = b.time || null;
-    booking.customer = b.customer || {};
-  } catch (e) { /* ignorer */ }
-}
-
-async function handleVippsReturn() {
-  const params = new URLSearchParams(location.search);
-  if (params.get("vipps") !== "return") return;
-  const reference = params.get("reference") || localStorage.getItem("agm_last_reference");
-  // Rydd URL-en
-  history.replaceState({}, "", location.pathname);
-  if (!reference) return;
-
-  restoreBooking(reference);
-  booking.reference = reference;
-
-  // Åpne modal i "verifiserer"-tilstand
-  modal.classList.add("is-open");
-  modal.setAttribute("aria-hidden", "false");
-  document.body.style.overflow = "hidden";
-  booking.step = 5;
-  updateProgress();
-  body.innerHTML = `
-    <div class="bk-confirm">
-      <div class="bk-spinner" aria-hidden="true"></div>
-      <h3 class="step-title">Bekrefter betaling …</h3>
-      <p class="step-sub">Et øyeblikk mens vi sjekker betalingen hos Vipps.</p>
-    </div>`;
-
-  const state = await pollPaymentStatus(reference);
-  booking.paymentState = state;
-  renderConfirmStep(reference, state);
 }
 
 /* ---------- Event delegation ---------- */
@@ -623,19 +462,9 @@ document.addEventListener("click", (e) => {
     booking.step = Number(t.dataset.next); renderStep(); return;
   }
   if (t.hasAttribute("data-submit-details")) {
-    if (!validateDetails()) return;
-    if (PAYMENT.enabled) {
-      booking.step = 4;
-    } else {
-      // Booking uten betaling – hopp rett til bekreftelse.
-      booking.reference = "AGM-" + Math.random().toString(36).slice(2, 7).toUpperCase();
-      booking.paymentState = "NONE";
-      booking.step = 5;
-    }
-    renderStep();
+    if (validateDetails()) { booking.step = 4; renderStep(); }
     return;
   }
-  if (t.hasAttribute("data-pay-vipps")) { startVippsPayment(); return; }
 });
 
 document.addEventListener("keydown", (e) => {
@@ -646,4 +475,3 @@ document.addEventListener("keydown", (e) => {
 renderServices();
 renderReviews();
 $("#year").textContent = new Date().getFullYear();
-handleVippsReturn();

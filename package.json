@@ -1,9 +1,0 @@
-{
-  "name": "agrolife-mysen",
-  "version": "1.0.0",
-  "private": true,
-  "description": "Nettside med innebygd bookingsystem og Vipps-betaling for Agrolife Mysen Dyrebutikk & Hundefrisør",
-  "engines": {
-    "node": ">=18"
-  }
-}
