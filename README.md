@@ -3,6 +3,11 @@
 En profesjonell, ren nettside med innebygd bookingsystem for Agrolife Mysen
 Dyrebutikk & Hundefrisør (Meieriveien 2, Mysen).
 
+🌐 **Live nettside:** https://havbjerke.github.io/bjerke_creative/
+
+Siden publiseres automatisk til GitHub Pages ved hver push (se
+`.github/workflows/deploy-pages.yml`).
+
 ## Innhold
 - `index.html` – sidens struktur (hero, om oss, tjenester, omtaler, kontakt, CTA, footer)
 - `styles.css` – design og responsivt oppsett (varm grønn/krem-palett)
