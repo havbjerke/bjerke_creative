@@ -240,7 +240,7 @@ function renderReviews() {
 /* =========================================================
    Booking system
    ========================================================= */
-const booking = { step: 1, service: null, date: null, time: null, customer: {} };
+const booking = { step: 1, service: null, date: null, time: null, customer: {}, payMethod: "card", paymentInfo: null };
 
 const modal = $("#booking-modal");
 const body = $("#booking-body");
@@ -251,6 +251,8 @@ function openBooking(serviceId) {
   booking.date = null;
   booking.time = null;
   booking.customer = {};
+  booking.payMethod = "card";
+  booking.paymentInfo = null;
   if (booking.service) booking.step = 2; // jump straight to time pick if service preselected
   modal.classList.add("is-open");
   modal.setAttribute("aria-hidden", "false");
@@ -293,7 +295,8 @@ function renderStep() {
   if (booking.step === 1) renderServiceStep();
   else if (booking.step === 2) renderTimeStep();
   else if (booking.step === 3) renderDetailsStep();
-  else if (booking.step === 4) renderConfirmStep();
+  else if (booking.step === 4) renderPaymentStep();
+  else if (booking.step === 5) renderConfirmStep();
   body.parentElement.scrollTop = 0;
 }
 
@@ -381,7 +384,7 @@ function renderDetailsStep() {
     </div>
     <div class="bk-nav">
       <button class="btn btn-ghost" data-goto="2">Tilbake</button>
-      <button class="btn btn-primary" data-submit-details>Se oppsummering</button>
+      <button class="btn btn-primary" data-submit-details>Til betaling</button>
     </div>`;
 }
 
@@ -407,12 +410,185 @@ function validateDetails() {
   return ok;
 }
 
-/* Step 4 – confirmation */
+/* ---------- Betaling (kort / lommebok) ---------- */
+const PAY_METHODS = [
+  { id: "card", label: "Kort", icon: "💳" },
+  { id: "applepay", label: "Apple Pay", icon: "" },
+  { id: "googlepay", label: "Google Pay", icon: "" },
+];
+
+function cardBrand(num) {
+  if (/^4/.test(num)) return "Visa";
+  if (/^(5[1-5]|2[2-7])/.test(num)) return "Mastercard";
+  if (/^3[47]/.test(num)) return "Amex";
+  return "";
+}
+
+function luhnOk(num) {
+  if (num.length < 12) return false;
+  let sum = 0, alt = false;
+  for (let i = num.length - 1; i >= 0; i--) {
+    let n = +num[i];
+    if (alt) { n *= 2; if (n > 9) n -= 9; }
+    sum += n; alt = !alt;
+  }
+  return sum % 10 === 0;
+}
+
+/* Step 4 – payment */
+function renderPaymentStep() {
+  const s = booking.service;
+  const tabs = PAY_METHODS.map((m) => `
+    <button class="bk-method ${booking.payMethod === m.id ? "is-active" : ""}" data-pay-method="${m.id}">
+      ${m.icon ? `<span class="bk-method-ico">${m.icon}</span>` : ""}${m.label}
+    </button>`).join("");
+
+  let content;
+  if (booking.payMethod === "card") {
+    content = `
+      <div class="bk-cards-accepted" aria-hidden="true">
+        <span class="cardbrand visa">VISA</span>
+        <span class="cardbrand mc">Mastercard</span>
+        <span class="cardbrand amex">AMEX</span>
+      </div>
+      <div class="bk-field" data-field="cardnumber">
+        <label for="f-cardnumber">Kortnummer</label>
+        <div class="bk-card-input">
+          <input id="f-cardnumber" inputmode="numeric" autocomplete="cc-number" placeholder="1234 5678 9012 3456" maxlength="23" />
+          <span class="bk-card-brand" id="card-brand"></span>
+        </div>
+        <span class="bk-error">Ugyldig kortnummer.</span>
+      </div>
+      <div class="bk-field-row">
+        <div class="bk-field" data-field="exp">
+          <label for="f-exp">Utløp (MM/ÅÅ)</label>
+          <input id="f-exp" inputmode="numeric" autocomplete="cc-exp" placeholder="MM/ÅÅ" maxlength="5" />
+          <span class="bk-error">Sjekk dato.</span>
+        </div>
+        <div class="bk-field" data-field="cvc">
+          <label for="f-cvc">CVC</label>
+          <input id="f-cvc" inputmode="numeric" autocomplete="cc-csc" placeholder="123" maxlength="4" />
+          <span class="bk-error">Sjekk CVC.</span>
+        </div>
+      </div>
+      <div class="bk-field" data-field="cardname">
+        <label for="f-cardname">Navn på kortet</label>
+        <input id="f-cardname" autocomplete="cc-name" placeholder="Som det står på kortet" value="${booking.customer.name || ""}" />
+        <span class="bk-error">Fyll inn navn.</span>
+      </div>
+      <button class="btn btn-primary btn-block bk-pay-btn" data-pay-card>Betal ${fmtPrice(s.price)}</button>`;
+  } else {
+    const label = booking.payMethod === "applepay" ? "Apple Pay" : "Google Pay";
+    content = `
+      <p class="bk-wallet-note">Du bekrefter betalingen på ${fmtPrice(s.price)} med ${label}.</p>
+      <button class="btn btn-block bk-wallet-btn" data-pay-wallet="${label}">Betal med ${label}</button>`;
+  }
+
+  body.innerHTML = `
+    <h3 class="step-title">Betaling</h3>
+    <p class="step-sub">Velg betalingsmåte og fullfør bookingen.</p>
+    ${summaryBanner()}
+    <div class="bk-pay-total">
+      <span>Å betale</span><strong>${fmtPrice(s.price)}</strong>
+    </div>
+    <div class="bk-methods">${tabs}</div>
+    <div class="bk-pay-content">${content}</div>
+    <p class="bk-pay-note">🔒 Betalingen er kryptert. Kortinformasjon lagres ikke.</p>
+    <div class="bk-nav">
+      <button class="btn btn-ghost" data-goto="3">Tilbake</button>
+    </div>`;
+
+  if (booking.payMethod === "card") attachCardFormatting();
+}
+
+/* Live-formatering av kortfelt */
+function attachCardFormatting() {
+  const num = document.getElementById("f-cardnumber");
+  const exp = document.getElementById("f-exp");
+  const cvc = document.getElementById("f-cvc");
+  const brandEl = document.getElementById("card-brand");
+
+  num.addEventListener("input", () => {
+    const digits = num.value.replace(/\D/g, "").slice(0, 19);
+    num.value = digits.replace(/(.{4})/g, "$1 ").trim();
+    const brand = cardBrand(digits);
+    brandEl.textContent = brand;
+  });
+  exp.addEventListener("input", () => {
+    let d = exp.value.replace(/\D/g, "").slice(0, 4);
+    if (d.length >= 3) d = d.slice(0, 2) + "/" + d.slice(2);
+    exp.value = d;
+  });
+  cvc.addEventListener("input", () => {
+    cvc.value = cvc.value.replace(/\D/g, "").slice(0, 4);
+  });
+}
+
+function validateCard() {
+  const numEl = document.getElementById("f-cardnumber");
+  const expEl = document.getElementById("f-exp");
+  const cvcEl = document.getElementById("f-cvc");
+  const nameEl = document.getElementById("f-cardname");
+  const digits = numEl.value.replace(/\D/g, "");
+  let ok = true;
+  const setErr = (field, bad) => {
+    document.querySelector(`[data-field="${field}"]`).classList.toggle("has-error", bad);
+    if (bad) ok = false;
+  };
+
+  setErr("cardnumber", !luhnOk(digits));
+
+  const m = expEl.value.match(/^(\d{2})\/(\d{2})$/);
+  let expBad = !m;
+  if (m) {
+    const mm = +m[1], yy = 2000 + +m[2];
+    const now = new Date();
+    expBad = mm < 1 || mm > 12 || yy < now.getFullYear() || (yy === now.getFullYear() && mm < now.getMonth() + 1);
+  }
+  setErr("exp", expBad);
+
+  const isAmex = cardBrand(digits) === "Amex";
+  setErr("cvc", !new RegExp(`^\\d{${isAmex ? 4 : 3}}$`).test(cvcEl.value));
+  setErr("cardname", nameEl.value.trim().length < 2);
+
+  return { ok, brand: cardBrand(digits) || "Kort", last4: digits.slice(-4) };
+}
+
+function payWithCard() {
+  const res = validateCard();
+  if (!res.ok) return;
+  booking.paymentInfo = { method: res.brand, last4: res.last4 };
+  processPayment();
+}
+
+function payWithWallet(label) {
+  booking.paymentInfo = { method: label, last4: null };
+  processPayment();
+}
+
+/* Simulert behandling -> bekreftelse. Kobles til ekte leverandør (Stripe) senere. */
+function processPayment() {
+  booking.step = 5;
+  updateProgress();
+  body.innerHTML = `
+    <div class="bk-confirm">
+      <div class="bk-spinner" aria-hidden="true"></div>
+      <h3 class="step-title">Behandler betaling …</h3>
+      <p class="step-sub">Et øyeblikk.</p>
+    </div>`;
+  setTimeout(renderConfirmStep, 1100);
+}
+
+/* Step 5 – confirmation */
 function renderConfirmStep() {
   const s = booking.service;
   const c = booking.customer;
+  const pi = booking.paymentInfo;
   const when = `${DOW[booking.date.getDay()]} ${String(booking.date.getDate()).padStart(2, "0")}.${MON[booking.date.getMonth()]}.${booking.date.getFullYear()} kl. ${booking.time}`;
   const ref = "AGM-" + Math.random().toString(36).slice(2, 7).toUpperCase();
+  const paidWith = pi
+    ? `${pi.method}${pi.last4 ? " •••• " + pi.last4 : ""} ✓`
+    : "Betalt ✓";
 
   body.innerHTML = `
     <div class="bk-confirm">
@@ -425,8 +601,9 @@ function renderConfirmStep() {
         <div class="bk-receipt-row"><span class="lbl">Utøver</span><span class="val">Torild</span></div>
         <div class="bk-receipt-row"><span class="lbl">Sted</span><span class="val">Meieriveien 2, Mysen</span></div>
         ${c.dog ? `<div class="bk-receipt-row"><span class="lbl">Hund</span><span class="val">${c.dog}</span></div>` : ""}
+        <div class="bk-receipt-row"><span class="lbl">Betalt med</span><span class="val">${paidWith}</span></div>
         <div class="bk-receipt-row"><span class="lbl">Referanse</span><span class="val">${ref}</span></div>
-        <div class="bk-receipt-row"><span class="lbl">Pris</span><span class="val bk-receipt-total">${fmtPrice(s.price)}</span></div>
+        <div class="bk-receipt-row"><span class="lbl">Beløp</span><span class="val bk-receipt-total">${fmtPrice(s.price)}</span></div>
       </div>
       <p class="bk-note">En bekreftelse sendes til ${c.email ? c.email : "telefonen din"}. Trenger du å endre timen, ta kontakt med oss.</p>
       <div class="bk-nav">
@@ -437,7 +614,7 @@ function renderConfirmStep() {
 
 /* ---------- Event delegation ---------- */
 document.addEventListener("click", (e) => {
-  const t = e.target.closest("[data-book-open], [data-book-close], [data-pick-service], [data-pick-date], [data-pick-time], [data-goto], [data-next], [data-submit-details]");
+  const t = e.target.closest("[data-book-open], [data-book-close], [data-pick-service], [data-pick-date], [data-pick-time], [data-goto], [data-next], [data-submit-details], [data-pay-method], [data-pay-card], [data-pay-wallet]");
   if (!t) return;
 
   if (t.hasAttribute("data-book-open")) { openBooking(t.dataset.service); return; }
@@ -465,6 +642,11 @@ document.addEventListener("click", (e) => {
     if (validateDetails()) { booking.step = 4; renderStep(); }
     return;
   }
+  if (t.hasAttribute("data-pay-method")) {
+    booking.payMethod = t.dataset.payMethod; renderStep(); return;
+  }
+  if (t.hasAttribute("data-pay-card")) { payWithCard(); return; }
+  if (t.hasAttribute("data-pay-wallet")) { payWithWallet(t.dataset.payWallet); return; }
 });
 
 document.addEventListener("keydown", (e) => {
