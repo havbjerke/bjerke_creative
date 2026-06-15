@@ -590,6 +590,10 @@ function renderConfirmStep() {
     ? `${pi.method}${pi.last4 ? " •••• " + pi.last4 : ""} ✓`
     : "Betalt ✓";
 
+  const noteText = c.email
+    ? `Sender bekreftelse til ${c.email} …`
+    : "Vi tar kontakt for å bekrefte timen.";
+
   body.innerHTML = `
     <div class="bk-confirm">
       <div class="bk-check">✓</div>
@@ -605,11 +609,39 @@ function renderConfirmStep() {
         <div class="bk-receipt-row"><span class="lbl">Referanse</span><span class="val">${ref}</span></div>
         <div class="bk-receipt-row"><span class="lbl">Beløp</span><span class="val bk-receipt-total">${fmtPrice(s.price)}</span></div>
       </div>
-      <p class="bk-note">En bekreftelse sendes til ${c.email ? c.email : "telefonen din"}. Trenger du å endre timen, ta kontakt med oss.</p>
+      <p class="bk-note" id="confirm-note">${noteText}</p>
       <div class="bk-nav">
         <button class="btn btn-primary btn-block" data-book-close>Ferdig</button>
       </div>
     </div>`;
+
+  sendConfirmation({
+    service: s.name,
+    price: s.price,
+    when,
+    reference: ref,
+    paymentMethod: paidWith,
+    customer: { name: c.name, email: c.email, phone: c.phone, dog: c.dog, note: c.note },
+  });
+}
+
+/* Sender bookingdata til backend som trigger bekreftelsesmail.
+   Feiler stille i forhåndsvisning uten backend. */
+function sendConfirmation(data) {
+  fetch("/api/send-confirmation", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  })
+    .then((r) => (r.ok ? r.json() : Promise.reject(r)))
+    .then(() => {
+      const el = document.getElementById("confirm-note");
+      if (el && data.customer.email) el.textContent = `Bekreftelse sendt til ${data.customer.email}.`;
+    })
+    .catch(() => {
+      const el = document.getElementById("confirm-note");
+      if (el && data.customer.email) el.textContent = "Bekreftelse sendes så snart som mulig.";
+    });
 }
 
 /* ---------- Event delegation ---------- */

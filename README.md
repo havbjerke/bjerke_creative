@@ -14,14 +14,33 @@ Siden publiseres automatisk til GitHub Pages ved hver push (se
 - `app.js` – tjeneste- og omtaledata + det innebygde bookingsystemet
 
 ## Bookingsystem
-Bookingen ligger direkte i nettsiden (Timma-stil) og kjører som en 4-stegs flyt:
+Bookingen ligger direkte i nettsiden (Timma-stil) og kjører som en 5-stegs flyt:
 1. **Velg tjeneste** – alle tjenester gruppert etter kategori med pris og varighet
 2. **Velg tid** – kommende dager (søndager stengt) med ledige klokkeslett
 3. **Dine opplysninger** – navn, telefon, e-post, hund og melding (med validering)
-4. **Bekreftelse** – kvittering med referansenummer
+4. **Betaling** – kort (Visa/Mastercard/Amex), Apple Pay eller Google Pay (frontend-UI)
+5. **Bekreftelse** – kvittering med referansenummer + bekreftelsesmail
 
-Flyten er fullstendig på klientsiden. For ekte bookinger kan steg 3–4 kobles til
-et backend-/kalender-API (f.eks. Timma) i `app.js` (`renderConfirmStep`).
+## Bekreftelsesmail
+Når en booking fullføres sendes det e-post via **[Resend](https://resend.com)**:
+en **kvittering til kunden** og et **varsel til salongen** (Torild).
+
+**Filer:**
+- `lib/email.js` – sending + HTML-maler
+- `api/send-confirmation.js` – `POST /api/send-confirmation` (serverless-funksjon)
+- Frontend: `app.js` kaller endepunktet i `renderConfirmStep` / `sendConfirmation`
+
+### Sett opp
+1. Lag konto på https://resend.com og hent en **API-nøkkel** (gratis nivå finnes).
+2. Deploy repoet til en host som kjører serverless-funksjoner – **anbefalt: [Vercel](https://vercel.com)** (oppdager `api/`-mappen automatisk).
+3. Legg inn miljøvariablene fra `.env.example`:
+   `RESEND_API_KEY`, `MAIL_FROM`, `SALON_EMAIL`.
+   - Til testing kan `MAIL_FROM` være `Agrolife Mysen <onboarding@resend.dev>`.
+   - For produksjon: verifiser eget domene i Resend og bruk f.eks. `booking@dittdomene.no`.
+
+> **Merk:** E-post krever serverkode og fungerer derfor **ikke** på GitHub Pages
+> eller githack-forhåndsvisningen. På de statiske visningene viser kvitteringen
+> en vennlig melding i stedet, men selve bookingflyten fungerer som normalt.
 
 ## Bilder / grafikk
 Nettsiden er helt selvstendig og bruker ingen eksterne bilder. Grafikken er
