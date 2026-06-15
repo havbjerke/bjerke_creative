@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin – Agrolife Mysen</title>
+  <meta name="robots" content="noindex" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="admin.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐾</text></svg>" />
+</head>
+<body>
+  <!-- Login -->
+  <div id="login" class="login-wrap">
+    <form class="login-card" id="login-form">
+      <div class="login-brand">🐾 Agrolife Mysen</div>
+      <h1>Adminpanel</h1>
+      <p class="login-sub">Logg inn for å se og styre bestillinger.</p>
+      <label for="pwd">Passord</label>
+      <input id="pwd" type="password" autocomplete="current-password" placeholder="••••••••" />
+      <button type="submit" class="btn btn-primary btn-block">Logg inn</button>
+      <p class="login-error" id="login-error"></p>
+    </form>
+  </div>
+
+  <!-- Dashboard -->
+  <div id="dash" class="dash" hidden>
+    <header class="dash-header">
+      <div class="dash-brand">🐾 Agrolife Mysen <span>· Admin</span></div>
+      <div class="dash-actions">
+        <button class="btn btn-ghost" id="refresh">↻ Oppdater</button>
+        <button class="btn btn-ghost" id="logout">Logg ut</button>
+      </div>
+    </header>
+
+    <main class="dash-main">
+      <div id="kv-warning" class="kv-warning" hidden>
+        ⚠️ Database (Vercel KV) er ikke koblet til ennå. Bestillinger og statistikk
+        vises først når KV er lagt til i Vercel. Se README.
+      </div>
+
+      <!-- Stats -->
+      <section class="stat-grid" id="stat-grid"></section>
+
+      <!-- Visits chart -->
+      <section class="panel">
+        <h2>Besøk siste 14 dager</h2>
+        <div class="chart" id="chart"></div>
+      </section>
+
+      <!-- Bookings -->
+      <section class="panel">
+        <div class="panel-head">
+          <h2>Bestillinger</h2>
+          <input id="search" class="search" type="search" placeholder="Søk navn, hund, telefon …" />
+        </div>
+        <div class="filters" id="filters">
+          <button class="filter is-active" data-filter="alle">Alle</button>
+          <button class="filter" data-filter="ny">Nye</button>
+          <button class="filter" data-filter="akseptert">Aksepterte</button>
+          <button class="filter" data-filter="kansellert">Kansellerte</button>
+        </div>
+        <div id="bookings" class="bookings"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="admin.js"></script>
+</body>
+</html>

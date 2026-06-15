@@ -8,9 +8,10 @@ Dyrebutikk & Hundefrisør (Meieriveien 2, Mysen).
 `https://bjerke-creative.vercel.app`.
 
 ## Innhold
-- `index.html` – sidens struktur (hero, om oss, tjenester, omtaler, kontakt, CTA, footer)
-- `styles.css` – design og responsivt oppsett (varm grønn/krem-palett)
-- `app.js` – tjeneste- og omtaledata + det innebygde bookingsystemet
+- `index.html` / `styles.css` / `app.js` – nettsiden + det innebygde bookingsystemet
+- `admin.html` / `admin.css` / `admin.js` – adminpanelet (`/admin`)
+- `api/` – serverless-funksjoner (booking, besøkstelling, admin, innlogging)
+- `lib/` – delt kode (e-post, database, autentisering)
 
 ## Bookingsystem
 Bookingen ligger direkte i nettsiden (Timma-stil) og kjører som en 5-stegs flyt:
@@ -26,7 +27,7 @@ en **kvittering til kunden** og et **varsel til salongen** (Torild).
 
 **Filer:**
 - `lib/email.js` – sending + HTML-maler
-- `api/send-confirmation.js` – `POST /api/send-confirmation` (serverless-funksjon)
+- `api/bookings.js` – `POST /api/bookings` (lagrer bookingen + sender e-post)
 - Frontend: `app.js` kaller endepunktet i `renderConfirmStep` / `sendConfirmation`
 
 ### Sett opp
@@ -40,6 +41,23 @@ en **kvittering til kunden** og et **varsel til salongen** (Torild).
 > **Merk:** E-post krever serverkode og fungerer derfor **ikke** på GitHub Pages
 > eller githack-forhåndsvisningen. På de statiske visningene viser kvitteringen
 > en vennlig melding i stedet, men selve bookingflyten fungerer som normalt.
+
+## Adminpanel (`/admin`)
+Et enkelt dashbord for eier/operatør – åpne `https://din-side.vercel.app/admin`
+og logg inn med admin-passordet.
+
+Funksjoner:
+- **Statistikk:** antall bestillinger, nye/venter, aksepterte, omsetning, besøk.
+- **Besøksgraf:** sidebesøk siste 14 dager.
+- **Bestillinger:** se kunde, telefon, e-post, hund, melding og betalingsmåte.
+  Søk og filtrer på status.
+- **Aksepter / Avlys:** ett klikk – kunden får automatisk e-postvarsel.
+
+**Filer:** `admin.html`, `admin.css`, `admin.js`, `api/admin/*`,
+`api/track.js` (besøk), `lib/auth.js` (innlogging), `lib/kv.js` (database).
+
+Lagring skjer i **Vercel KV** (Redis). Uten KV fungerer nettsiden og e-post
+fortsatt, men adminpanelet viser ingen data før KV er koblet til.
 
 ## Bilder / grafikk
 Nettsiden er helt selvstendig og bruker ingen eksterne bilder. Grafikken er
@@ -61,17 +79,22 @@ python3 -m http.server 8000
 (Betaling-UI fungerer lokalt; bekreftelsesmail krever Vercel + env-variabler.)
 
 ## Deploy til Vercel
-Vercel kjører både den statiske siden og `api/`-funksjonene (bekreftelsesmail).
+Vercel kjører både den statiske siden og `api/`-funksjonene.
 
 1. Lag konto på https://vercel.com og logg inn med GitHub.
 2. **Add New… → Project** → importer repoet `havbjerke/bjerke_creative`.
 3. Framework Preset: **Other** (ingen build trengs). La «Root Directory» være `./`.
-4. Åpne **Environment Variables** og legg inn (fra `.env.example`):
-   - `RESEND_API_KEY`
+4. **Legg til database:** prosjektets **Storage → Create Database → KV** (Upstash
+   Redis). Velg gratisplanen og koble den til prosjektet – `KV_REST_API_URL` og
+   `KV_REST_API_TOKEN` settes da automatisk. (Kan også gjøres etter første deploy.)
+5. Åpne **Settings → Environment Variables** og legg inn (fra `.env.example`):
+   - `RESEND_API_KEY` – fra Resend
    - `MAIL_FROM` – f.eks. `Agrolife Mysen <onboarding@resend.dev>` til test
    - `SALON_EMAIL` – Torilds e-post for varsler
-5. Klikk **Deploy**. Du får en URL som `https://bjerke-creative.vercel.app`.
-6. Hver nye push til GitHub deployer automatisk på nytt.
+   - `ADMIN_PASSWORD` – passordet for `/admin`
+   - `ADMIN_SECRET` – en lang tilfeldig streng (signerer innlogging)
+6. Klikk **Deploy** (eller **Redeploy** hvis du la til KV/variabler etterpå).
+   Du får en URL som `https://bjerke-creative.vercel.app`.
+7. Hver nye push til GitHub deployer automatisk på nytt.
 
-Bytt `vercel.json`/preset om du vil ha et eget domene (Settings → Domains).
-`vercel.json` er allerede satt opp med rene URL-er.
+Adminpanelet ligger på `…/admin`. Eget domene: Settings → Domains.

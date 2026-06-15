@@ -606,7 +606,7 @@ function renderConfirmStep() {
         <div class="bk-receipt-row"><span class="lbl">Sted</span><span class="val">Meieriveien 2, Mysen</span></div>
         ${c.dog ? `<div class="bk-receipt-row"><span class="lbl">Hund</span><span class="val">${c.dog}</span></div>` : ""}
         <div class="bk-receipt-row"><span class="lbl">Betalt med</span><span class="val">${paidWith}</span></div>
-        <div class="bk-receipt-row"><span class="lbl">Referanse</span><span class="val">${ref}</span></div>
+        <div class="bk-receipt-row"><span class="lbl">Referanse</span><span class="val" id="confirm-ref">${ref}</span></div>
         <div class="bk-receipt-row"><span class="lbl">Beløp</span><span class="val bk-receipt-total">${fmtPrice(s.price)}</span></div>
       </div>
       <p class="bk-note" id="confirm-note">${noteText}</p>
@@ -625,18 +625,26 @@ function renderConfirmStep() {
   });
 }
 
-/* Sender bookingdata til backend som trigger bekreftelsesmail.
+/* Registrerer bookingen i backend (lagring + bekreftelsesmail).
    Feiler stille i forhåndsvisning uten backend. */
 function sendConfirmation(data) {
-  fetch("/api/send-confirmation", {
+  fetch("/api/bookings", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   })
     .then((r) => (r.ok ? r.json() : Promise.reject(r)))
-    .then(() => {
+    .then((res) => {
+      if (res && res.reference) {
+        const rf = document.getElementById("confirm-ref");
+        if (rf) rf.textContent = res.reference;
+      }
       const el = document.getElementById("confirm-note");
-      if (el && data.customer.email) el.textContent = `Bekreftelse sendt til ${data.customer.email}.`;
+      if (el) {
+        el.textContent = res && res.emailed
+          ? `Bekreftelse sendt til ${data.customer.email}.`
+          : "Bookingen er registrert. Vi tar kontakt for å bekrefte.";
+      }
     })
     .catch(() => {
       const el = document.getElementById("confirm-note");
@@ -689,3 +697,5 @@ document.addEventListener("keydown", (e) => {
 renderServices();
 renderReviews();
 $("#year").textContent = new Date().getFullYear();
+// Tell sidebesøk (feiler stille uten backend)
+fetch("/api/track", { method: "POST" }).catch(() => {});
