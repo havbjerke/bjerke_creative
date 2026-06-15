@@ -3,10 +3,9 @@
 En profesjonell, ren nettside med innebygd bookingsystem for Agrolife Mysen
 Dyrebutikk & Hundefrisør (Meieriveien 2, Mysen).
 
-🌐 **Live nettside:** https://havbjerke.github.io/bjerke_creative/
-
-Siden publiseres automatisk til GitHub Pages ved hver push (se
-`.github/workflows/deploy-pages.yml`).
+🌐 **Hosting:** Vercel (statisk side + serverless `api/`-funksjoner). Se
+«Deploy til Vercel» nederst. Etter første deploy får du en URL som
+`https://bjerke-creative.vercel.app`.
 
 ## Innhold
 - `index.html` – sidens struktur (hero, om oss, tjenester, omtaler, kontakt, CTA, footer)
@@ -58,3 +57,21 @@ Vil du heller bruke ekte foto senere, kan `assets/dog.svg`-referansene i
 python3 -m http.server 8000
 # åpne http://localhost:8000
 ```
+
+(Betaling-UI fungerer lokalt; bekreftelsesmail krever Vercel + env-variabler.)
+
+## Deploy til Vercel
+Vercel kjører både den statiske siden og `api/`-funksjonene (bekreftelsesmail).
+
+1. Lag konto på https://vercel.com og logg inn med GitHub.
+2. **Add New… → Project** → importer repoet `havbjerke/bjerke_creative`.
+3. Framework Preset: **Other** (ingen build trengs). La «Root Directory» være `./`.
+4. Åpne **Environment Variables** og legg inn (fra `.env.example`):
+   - `RESEND_API_KEY`
+   - `MAIL_FROM` – f.eks. `Agrolife Mysen <onboarding@resend.dev>` til test
+   - `SALON_EMAIL` – Torilds e-post for varsler
+5. Klikk **Deploy**. Du får en URL som `https://bjerke-creative.vercel.app`.
+6. Hver nye push til GitHub deployer automatisk på nytt.
+
+Bytt `vercel.json`/preset om du vil ha et eget domene (Settings → Domains).
+`vercel.json` er allerede satt opp med rene URL-er.
