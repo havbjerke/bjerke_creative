@@ -102,7 +102,7 @@ a { color: inherit; text-decoration: none; }
 /* ===== Hero ===== */
 .hero {
   background:
-    radial-gradient(1200px 500px at 80% -10%, rgba(76, 130, 104, .18), transparent 60%),
+    radial-gradient(1200px 500px at 80% -10%, rgba(33, 96, 173, .16), transparent 60%),
     linear-gradient(180deg, var(--cream) 0%, var(--cream) 60%, var(--cream-dark) 100%);
   padding: clamp(3rem, 7vw, 6rem) 0 clamp(3.5rem, 8vw, 7rem);
 }
@@ -124,10 +124,10 @@ a { color: inherit; text-decoration: none; }
   border-radius: 26px; box-shadow: var(--shadow-lg); border: 1px solid var(--line);
   background:
     url("assets/wheel.svg") top 18px right 22px / 110px no-repeat,
-    radial-gradient(120% 120% at 30% 20%, #eef5f0 0%, #dbe9e0 55%, #cfe0d5 100%);
+    radial-gradient(120% 120% at 30% 20%, #eef3fb 0%, #dbe7f6 55%, #cfe0f3 100%);
   display: grid; place-items: center; overflow: hidden;
 }
-.hero-illus img { width: 74%; max-width: 280px; height: auto; filter: drop-shadow(0 12px 24px rgba(31,58,46,.18)); position: relative; z-index: 1; }
+.hero-illus img { width: 74%; max-width: 280px; height: auto; filter: drop-shadow(0 12px 24px rgba(14,36,64,.18)); position: relative; z-index: 1; }
 .hero-visual .hero-card {
   flex: 0 0 46%; max-width: 250px; order: -1;
 }
@@ -137,7 +137,7 @@ a { color: inherit; text-decoration: none; }
   box-shadow: var(--shadow-lg); border: 1px solid var(--line);
 }
 .hero-card-top { display: flex; align-items: center; gap: .5rem; font-weight: 600; color: var(--green-700); font-size: .9rem; }
-.hero-card-top .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--green-500); box-shadow: 0 0 0 4px rgba(76,130,104,.18); }
+.hero-card-top .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--green-500); box-shadow: 0 0 0 4px rgba(33,96,173,.18); }
 .hero-card-time { font-family: var(--font-head); font-size: 2rem; color: var(--green-900); margin: .4rem 0 .2rem; }
 .hero-card-sub { color: var(--muted); font-size: .95rem; margin: 0 0 1.3rem; }
 .hero-card-list { list-style: none; padding: 0; margin: 1.4rem 0 0; display: grid; gap: .55rem; }
@@ -151,9 +151,9 @@ a { color: inherit; text-decoration: none; }
   box-shadow: var(--shadow-md); border: 1px solid var(--line); overflow: hidden;
   background:
     url("assets/wheel.svg") bottom 16px left 18px / 96px no-repeat,
-    radial-gradient(120% 120% at 70% 25%, #f3ede1 0%, #ece3d2 60%, #e3d8c2 100%);
+    radial-gradient(120% 120% at 70% 25%, #eef3fb 0%, #dde8f7 60%, #cdddf1 100%);
 }
-.about-illus img { width: 58%; max-width: 240px; height: auto; filter: drop-shadow(0 12px 24px rgba(31,58,46,.16)); }
+.about-illus img { width: 58%; max-width: 240px; height: auto; filter: drop-shadow(0 12px 24px rgba(14,36,64,.16)); }
 .about-badge {
   position: absolute; right: -8px; bottom: -14px; background: var(--white);
   border: 1px solid var(--line); border-radius: 999px; padding: .6rem 1.1rem;
@@ -283,7 +283,7 @@ a { color: inherit; text-decoration: none; }
 /* ===== Modal / Booking ===== */
 .modal { position: fixed; inset: 0; z-index: 100; display: none; }
 .modal.is-open { display: block; }
-.modal-backdrop { position: absolute; inset: 0; background: rgba(20, 30, 24, .55); backdrop-filter: blur(3px); animation: fade .2s ease; }
+.modal-backdrop { position: absolute; inset: 0; background: rgba(10, 22, 38, .55); backdrop-filter: blur(3px); animation: fade .2s ease; }
 .modal-panel {
   position: relative; z-index: 1; width: min(560px, calc(100% - 32px));
   margin: 5vh auto; max-height: 90vh; overflow: auto;
