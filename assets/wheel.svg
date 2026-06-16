@@ -6,7 +6,7 @@
       <path d="M0 -4 V-13 M-3.4 2 L-11 9 M3.4 2 L11 9" stroke-width="4" stroke-linecap="round" fill="none"/>
     </g>
   </defs>
-  <g stroke="#1b4a86" fill="#1b4a86">
+  <g stroke="#c01524" fill="#c01524">
     <use href="#wheel" transform="translate(26 28) scale(.9)"/>
     <use href="#wheel" transform="translate(90 24) scale(.7)"/>
     <use href="#wheel" transform="translate(60 62) scale(1.05)"/>
