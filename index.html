@@ -57,7 +57,8 @@
       </div>
       <div class="hero-visual">
         <div class="hero-illus">
-          <img src="assets/car.svg" alt="Illustrasjon av en bil med L-skilt" width="320" height="320" />
+          <img src="assets/car.svg" alt="" class="hero-illus-fallback" width="320" height="320" />
+          <img src="assets/bil-front.jpg" alt="Rød Audi A3 fra BS Trafikkskole" class="hero-photo" onerror="this.remove()" />
         </div>
         <div class="hero-card">
           <div class="hero-card-top">
@@ -161,8 +162,30 @@
     </div>
   </section>
 
+  <!-- Bilene våre -->
+  <section class="section" id="biler">
+    <div class="container">
+      <div class="section-head">
+        <h2>Bilene våre</h2>
+        <p>Du øvelseskjører i moderne, godt utstyrte biler – kjente røde BST-biler på veiene i Mysen.</p>
+      </div>
+      <div class="gallery">
+        <figure class="shot shot-wide">
+          <img class="photo-img" src="assets/teamet-biler.jpg" alt="BS Trafikkskoles røde Audi-biler og trafikklærere på vinterføre" onerror="this.onerror=null;this.src='assets/car.svg';this.classList.add('fallback')" />
+          <figcaption>Trafikklærerne og bilparken vår</figcaption>
+        </figure>
+        <figure class="shot">
+          <img class="photo-img" src="assets/bil-front.jpg" alt="Rød Audi A3 fra BS Trafikkskole" onerror="this.onerror=null;this.src='assets/car.svg';this.classList.add('fallback')" />
+        </figure>
+        <figure class="shot">
+          <img class="photo-img" src="assets/bil-troc.jpg" alt="Rød VW T-Roc fra BS Trafikkskole" onerror="this.onerror=null;this.src='assets/car.svg';this.classList.add('fallback')" />
+        </figure>
+      </div>
+    </div>
+  </section>
+
   <!-- Process -->
-  <section class="section">
+  <section class="section section-muted">
     <div class="container">
       <div class="section-head">
         <h2>Slik blir du klar til førerprøven</h2>
@@ -193,7 +216,7 @@
   </section>
 
   <!-- Reviews -->
-  <section class="section section-muted" id="omtaler">
+  <section class="section" id="omtaler">
     <div class="container">
       <div class="section-head">
         <h2>Hva elevene sier</h2>
