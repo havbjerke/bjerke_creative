@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Rattmønster">
+  <defs>
+    <g id="wheel">
+      <circle cx="0" cy="0" r="15" fill="none" stroke-width="4"/>
+      <circle cx="0" cy="0" r="4"/>
+      <path d="M0 -4 V-13 M-3.4 2 L-11 9 M3.4 2 L11 9" stroke-width="4" stroke-linecap="round" fill="none"/>
+    </g>
+  </defs>
+  <g stroke="#1b4a86" fill="#1b4a86">
+    <use href="#wheel" transform="translate(26 28) scale(.9)"/>
+    <use href="#wheel" transform="translate(90 24) scale(.7)"/>
+    <use href="#wheel" transform="translate(60 62) scale(1.05)"/>
+    <use href="#wheel" transform="translate(22 94) scale(.65)"/>
+    <use href="#wheel" transform="translate(96 92) scale(.85)"/>
+  </g>
+</svg>

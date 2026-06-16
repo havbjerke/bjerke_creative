@@ -1,9 +1,9 @@
 :root{
-  --green-900:#1f3a2e;--green-700:#2f5a44;--green-600:#3a6b52;--green-500:#4c8268;
-  --green-100:#e4efe8;--cream:#f7f3ec;--cream-dark:#efe8db;--ink:#21281f;--muted:#6a7268;
-  --line:#e2ddd2;--white:#fff;--gold:#d9a441;--red:#b4452f;--orange:#d9893f;
-  --shadow-sm:0 1px 2px rgba(31,58,46,.06),0 2px 8px rgba(31,58,46,.05);
-  --shadow-md:0 8px 30px rgba(31,58,46,.12);
+  --green-900:#0e2440;--green-700:#1b4a86;--green-600:#2160ad;--green-500:#3a7bd5;
+  --green-100:#e4eefb;--cream:#f5f8fc;--cream-dark:#e9f0f9;--ink:#16243a;--muted:#5d6b80;
+  --line:#dde5ef;--white:#fff;--gold:#f2a93b;--red:#b4452f;--orange:#d9893f;
+  --shadow-sm:0 1px 2px rgba(14,36,64,.06),0 2px 8px rgba(14,36,64,.05);
+  --shadow-md:0 8px 30px rgba(14,36,64,.12);
   --font-head:"Fraunces",Georgia,serif;--font-body:"Inter",system-ui,sans-serif;
 }
 *{box-sizing:border-box}

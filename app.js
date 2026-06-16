@@ -1,156 +1,73 @@
 /* =========================================================
-   Agrolife Mysen – Dyrebutikk & Hundefrisør
-   Static site + integrated booking system (Timma-style)
+   BS Trafikkskole – Mysen
+   Statisk flersides nettside + innebygd bookingsystem
    ========================================================= */
 
-/* ---------- Data: services ---------- */
+/* ---------- Data: kurs & kjøretimer ---------- */
 const SERVICE_GROUPS = [
   {
-    name: "Klipp & Underull",
+    id: "grunnkurs",
+    name: "Trafikalt grunnkurs",
     services: [
-      { id: "klipp-liten", name: "Klipp Liten hund (maks 9 kg)", price: 850, desc: "Inkluderer bad/føn, maskinklipp eller frisering med saks, poteklipp, kloklipp, ørenapping/rens.", duration: 150 },
-      { id: "klipp-medium", name: "Klipp Medium hund (10–20 kg)", price: 950, desc: "Inkluderer bad/føn, maskinklipp eller frisering med saks, poteklipp, kloklipp, ørenapping/rens.", duration: 180 },
-      { id: "klipp-stor", name: "Klipp Stor hund (20+ kg)", price: 1050, desc: "Inkluderer bad/føn, maskinklipp eller frisering med saks, poteklipp, kloklipp, ørenapping/rens.", duration: 210 },
-      { id: "underull-liten", name: "Underull Liten hund", price: 850, desc: "Inkluderer bad/føn og utbørsting av underull. Ørerens og kloklipp/poteklipp.", duration: 120 },
-      { id: "underull-medium", name: "Underull Middels hund", price: 950, desc: "Inkluderer bad/føn og utbørsting av underull. Ørerens og kloklipp/poteklipp.", duration: 150 },
-      { id: "underull-stor", name: "Underull Stor hund", price: 1050, desc: "Inkluderer bad/føn og utbørsting av underull. Ørerens og kloklipp/poteklipp.", duration: 180 },
+      { id: "trafikalt-grunnkurs", name: "Trafikalt grunnkurs", price: 2990, desc: "Obligatorisk førstekurs for alle som skal ta førerkort for første gang. Inkluderer teori, førstehjelp og trafikant i mørket.", length: "Flere kvelder" },
+      { id: "morkekjoring", name: "Kurs i mørkekjøring", price: 1690, desc: "Trafikant i mørket – obligatorisk del av trafikalt grunnkurs. Arrangeres i vinterhalvåret.", length: "ca. 4 timer" },
     ],
   },
   {
-    name: "Bad & Føn",
+    id: "klasse-b",
+    name: "Klasse B – Personbil",
     services: [
-      { id: "bad-liten", name: "Bad/Føn Liten hund (maks 9 kg)", price: 300, desc: "Inkluderer bad, føn, kloklipp og ørerens.", duration: 60 },
-      { id: "bad-medium", name: "Bad/Føn Medium hund (10–20 kg)", price: 400, desc: "Inkluderer bad, føn, kloklipp og ørerens.", duration: 75 },
-      { id: "bad-stor", name: "Bad/Føn Stor hund (20+ kg)", price: 500, desc: "Inkluderer bad, føn, kloklipp og ørerens.", duration: 90 },
+      { id: "vurderingstime-b", name: "Vurderingstime klasse B", price: 790, desc: "Vi kartlegger nivået ditt og legger en plan mot førerkortet.", length: "45 min" },
+      { id: "kjoretime-b", name: "Kjøretime klasse B", price: 790, desc: "Personlig kjøretime med din faste trafikklærer. Manuelt eller automatgir.", length: "45 min" },
+      { id: "dobbelttime-b", name: "Dobbelttime klasse B", price: 1560, desc: "To kjøretimer i sammenheng for effektiv progresjon.", length: "90 min" },
+      { id: "sikkerhetskurs-bane", name: "Sikkerhetskurs på bane (glattkjøring)", price: 3490, desc: "Obligatorisk banekurs med fokus på sikkerhet og kontroll i krevende forhold.", length: "ca. 4 timer" },
+      { id: "sikkerhetskurs-vei", name: "Sikkerhetskurs på vei", price: 5900, desc: "Obligatorisk landeveiskjøring og oppsummering før førerprøven.", length: "Over 2 dager" },
     ],
   },
   {
-    name: "Kloklipp",
-    services: [{ id: "kloklipp", name: "Kloklipp", price: 100, desc: "Klipp av kloer på hund.", duration: 20 }],
+    id: "tilhenger",
+    name: "Tilhenger – Klasse B96 & BE",
+    services: [
+      { id: "klasse-b96", name: "Klasse B96 – bil med tilhenger", price: 4900, desc: "Utvidet kjøretøykombinasjon med tyngre tilhenger. Kurspakke med kjøring.", length: "Avtales" },
+      { id: "klasse-be", name: "Klasse BE – bil med tilhenger", price: 6900, desc: "Førerkort for bil med tilhenger. Obligatorisk kurs og kjøretimer.", length: "Avtales" },
+    ],
   },
   {
-    name: "Poteklipp",
-    services: [{ id: "poteklipp", name: "Poteklipp", price: 200, desc: "Kloklipp og klipp med maskin under poter.", duration: 30 }],
+    id: "mc",
+    name: "Motorsykkel – A1 / A2 / A",
+    services: [
+      { id: "vurderingstime-mc", name: "Vurderingstime motorsykkel", price: 950, desc: "Kartlegging og plan for MC-førerkortet (A1, A2 eller A).", length: "45 min" },
+      { id: "kjoretime-mc", name: "Kjøretime motorsykkel", price: 950, desc: "Personlig kjøretime på MC med erfaren MC-lærer.", length: "45 min" },
+      { id: "grunnkurs-mc", name: "Grunnkurs motorsykkel", price: 2900, desc: "Obligatorisk grunnkurs for motorsykkel før øvelseskjøring på vei.", length: "Flere økter" },
+      { id: "sikkerhetskurs-mc", name: "Sikkerhetskurs i presis kjøreteknikk", price: 3990, desc: "Obligatorisk baneøvelse med fokus på teknikk og sikkerhet.", length: "ca. 4 timer" },
+    ],
   },
   {
-    name: "Ansiktstuss",
-    services: [{ id: "ansiktstuss", name: "Ansiktstuss", price: 200, desc: "Tuss og forming av ansiktspels.", duration: 30 }],
-  },
-  {
-    name: "Napping liten hund",
-    services: [{ id: "napping", name: "Napping liten hund", price: 1300, desc: "Inkluderer napping av små hunder og kloklipp.", duration: 180 }],
-  },
-  {
-    name: "Klipp Katt",
-    services: [{ id: "klipp-katt", name: "Klipp Katt", price: 500, desc: "Klipp av floker på katt.", duration: 60 }],
+    id: "moped",
+    name: "Moped – Klasse AM146",
+    services: [
+      { id: "klasse-am", name: "Klasse AM146 – moped", price: 6900, desc: "Komplett mopedopplæring – teori, sikkerhetskurs og praktisk kjøring.", length: "Kurspakke" },
+    ],
   },
 ];
 
 const ALL_SERVICES = SERVICE_GROUPS.flatMap((g) => g.services);
 const SERVICE_BY_ID = Object.fromEntries(ALL_SERVICES.map((s) => [s.id, s]));
 
-/* ---------- Data: reviews ---------- */
+/* ---------- Data: omtaler (eksempler – byttes ut med ekte) ---------- */
 const REVIEWS = [
-  { service: "Klipp Liten hund max 9Kg", time: "5 dager siden", text: "I dag leverte jeg en bichon havanais som ikke har vært klippet på tre mnd. Etter 2,5 timer får jeg flotte nyklippet herlige Nanna tilbake. Poter, ører, kloer, ansikt og alt er perfekt. Merker hun er tilfreds. Lukter godt også. 😊", author: "Arild K" },
-  { service: "Klipp Medium hund 10-20Kg", time: "7 dager siden", text: "Super proff.", author: "Geir L" },
-  { service: "Klipp Liten hund max 9Kg", time: "18 dager siden", text: "Jeg er veldig fornøyd, har vært her flere ganger.", author: "Grethe M" },
-  { service: "Klipp Liten hund max 9Kg", time: "en måned siden", text: "Rex er alltid fornøyd, fin frisør 😊❤️🐕👍", author: "Kurt R" },
-  { service: "Klipp Medium hund 10-20Kg", time: "en måned siden", text: "Så fornøyd. Torild gjør en kjempejobb med ei sær gammel dame.", author: "Tove S" },
-  { service: "Napping liten hund", time: "en måned siden", text: "Han ble så fint nappet.", author: "Unni R" },
-  { service: "Klipp Stor hund 20+ Kg", time: "2 måneder siden", text: "Trulte og jeg er veldig fornøyde med godt stell, vi setter stor pris på god og vennlig mottagelse også.", author: "Britt O" },
-  { service: "Klipp Liten hund max 9Kg", time: "2 måneder siden", text: "Super service og veldig hyggelig! Anbefales 😄", author: "Kjell S" },
-  { service: "Klipp Liten hund max 9Kg", time: "3 måneder siden", text: "Kjempefornøyd med alt sammen. Fine poter, ører, hale og alt sammen. Flott i pelsen etter vask og klipp.", author: "Arild K" },
-  { service: "Klipp Liten hund max 9Kg", time: "3 måneder siden", text: "Som alltid, topp behandling.", author: "Ole J" },
-  { service: "Klipp Liten hund max 9Kg", time: "4 måneder siden", text: "Fantastisk service, meget godt utført arbeid. Ansatt er alltid like blid.", author: "Rune Å" },
-  { service: "Klipp Liten hund max 9Kg", time: "4 måneder siden", text: "Flink, er veldig fornøyd hver gang 🐶", author: "Kurt R" },
-  { service: "Klipp Liten hund max 9Kg", time: "4 måneder siden", text: "Veldig fornøyd. En frisør som tar seg god tid. God opplevelse både for matmor og lille Sara. Anbefales.", author: "Bente B" },
-  { service: "Napping liten hund", time: "4 måneder siden", text: "Alf koste seg hos Torild og han ble så fin ❤️ Hun anbefales 😀 vi sees i mai igjen.", author: "Laila" },
-  { service: "Klipp Liten hund max 9Kg", time: "4 måneder siden", text: "Meget bra opplevelse. Utrolig pent klipt. Både hund og eier er veldig fornøyd. Enkelt å bestille time og generelt god kundeopplevelse.", author: "Niels L" },
-  { service: "Bad/Føn Liten hund max 9Kg", time: "4 måneder siden", text: "Veldig hyggelig opplevelse. Super fornøyd og kommer tilbake 😀", author: "Amanda L" },
-  { service: "Klipp Stor hund 20+ Kg", time: "5 måneder siden", text: "Hyggelig mottagelse, flott behandling, og en superfornøyd Trulte etterpå!", author: "Britt O" },
-  { service: "Klipp Stor hund 20+ Kg", time: "5 måneder siden", text: "Ella blir alltid så fin og du er så flink og god mot henne!!!!", author: "Pia B" },
-  { service: "Napping liten hund", time: "5 måneder siden", text: "Hunden vår ble så fin etter napping. Vi kommer tilbake om 4 måneder 🙂", author: "Unni R" },
-  { service: "Klipp Liten hund max 9Kg", time: "6 måneder siden", text: "☺️ Det er en sann fryd å være her med Tina, trivelig og er på hundens nivå. Anbefales! Selvfølgelig.", author: "Ole J" },
-  { service: "Klipp Liten hund max 9Kg", time: "7 måneder siden", text: "Hunden min ble veldig fin. Full service. Badet og klippet. Også klørne.", author: "Grethe I" },
-  { service: "Klipp Liten hund max 9Kg", time: "7 måneder siden", text: "Bestandig en fin opplevelse å ha vår Tibbe hos Torild. Hun er profesjonell og dyktig. Hyggelig og tar seg godt av hunden. Vi kommer ikke til å bruke noen andre.", author: "Tommy F" },
-  { service: "Klipp Liten hund max 9Kg", time: "7 måneder siden", text: "Som alltid bra resultat og hyggelig service.", author: "Rune Å" },
-  { service: "Klipp Liten hund max 9Kg", time: "7 måneder siden", text: "Kjempe fornøyd 😊", author: "Kurt R" },
-  { service: "Klipp Medium hund 10-20Kg", time: "8 måneder siden", text: "Med hjertet på rett sted, og fokus på hunden. Anbefales. ✨🐶✨", author: "May E" },
-  { service: "Klipp Medium hund 10-20Kg", time: "8 måneder siden", text: "Så fornøyd med klipp og den supre servicen! Bjarne lukter så godt etter et besøk hos Torild!", author: "Cathe S" },
-  { service: "Klipp Liten hund max 9Kg", time: "9 måneder siden", text: "Topp som alltid.", author: "Rune Å" },
-  { service: "Klipp Liten hund max 9Kg", time: "9 måneder siden", text: "Like fornøyd denne gangen. Har bestilt time for en annen bichon havanais nå. Balder.", author: "Arild K" },
-  { service: "Klipp Liten hund max 9Kg", time: "10 måneder siden", text: "Da har hunden min vært hos Agrolife og blitt klippet og stelt. Ble veldig bra.", author: "Grethe I" },
-  { service: "Klipp Liten hund max 9Kg", time: "ett år siden", text: "Alltid koselig å komme ned hit, vi begge (to- og firbente) synes det er trivelig og koselig. 👍", author: "Ole J" },
-  { service: "Klipp Liten hund max 9Kg", time: "ett år siden", text: "Jeg har ikke ord for hvor fornøyd jeg er. Nanna ble så fin som hun aldri har vært før. Flotte poter, snute og ja, alt kjempebra. Service og mottagelse var betryggende og koselig. Også bra pris. Veldig veldig fornøyd. Vi kommer tilbake hver gang.", author: "Arild K" },
-  { service: "Klipp Medium hund 10-20Kg", time: "ett år siden", text: "Alltid like fornøyd når Torild klipper cobberdogen min!", author: "Iselin G" },
-  { service: "Klipp Medium hund 10-20Kg", time: "ett år siden", text: "Topp service og klipp av ei \"sær\" gammel dame.", author: "Tove S" },
-  { service: "Kloklipp", time: "ett år siden", text: "Kjapt og godt utført. Anbefales til både kloklipp og frisering/klipping.", author: "Linda K" },
-  { service: "Klipp Stor hund 20+ Kg", time: "ett år siden", text: "Fantastisk hyggelig dame som Lexi elsket med en gang.", author: "Mona I" },
-  { service: "Klipp Liten hund max 9Kg", time: "ett år siden", text: "Flott service og nydelig resultat utført av veldig hyggelig personell.", author: "Rune Å" },
-  { service: "Kloklipp", time: "ett år siden", text: "Trivelig og flink hundefrisør.", author: "Belinda S" },
-  { service: "Klipp Liten hund max 9Kg", time: "ett år siden", text: "Vi er så fornøyd 🐶❤️", author: "Kurt R" },
-  { service: "Ansiktstuss", time: "ett år siden", text: "Bra pris og utrolig god og flink med hunden.", author: "Maud I" },
-  { service: "Poteklipp", time: "ett år siden", text: "Bra pris og utrolig god og flink med hunden.", author: "Maud I" },
-  { service: "Klipp Liten hund max 9Kg", time: "ett år siden", text: "Helt topp 👍 Er veldig fornøyd 👍🤗", author: "Irene S" },
-  { service: "Klipp Liten hund max 9Kg", time: "ett år siden", text: "Flott arbeid og herlig service.", author: "Rune Å" },
-  { service: "Klipp Liten hund max 9Kg", time: "ett år siden", text: "Vakker og fint klippet. Koser seg og fornøyd med godt stell. 🤗", author: "Kjerstin K" },
-  { service: "Klipp Liten hund max 9Kg", time: "ett år siden", text: "Veldig flink frisør, vi er så fornøyd.", author: "Kurt R" },
-  { service: "Klipp Liten hund max 9Kg", time: "ett år siden", text: "Veldig hyggelig ansatte. Veldig god service. Meget godt lag med hunder.", author: "Rune Å" },
-  { service: "Klipp Medium hund 10-20Kg", time: "ett år siden", text: "Fantastisk Service 🤩🐶🐶", author: "May E" },
-  { service: "Bad/Føn Liten hund max 9Kg", time: "ett år siden", text: "Veldig bra, Rex er kjempe fornøyd 🐶", author: "Kurt R" },
-  { service: "Klipp Liten hund max 9Kg", time: "ett år siden", text: "Flink frisør. Hyggelig og god service.", author: "Runa M" },
-  { service: "Kloklipp", time: "2 år siden", text: "Meget god med min aktive lille hund ❣️", author: "Catarina M" },
-  { service: "Klipp Liten hund max 9Kg", time: "2 år siden", text: "Alltid fornøyd med Agrolife! Koselig og forståelsesfull selv om vi kom med litt mye floker. Vi blir alltid møtt med kjærlighet og lille Indie elsker Torild!", author: "Serian J" },
-  { service: "Klipp Medium hund 10-20Kg", time: "2 år siden", text: "Som alltid, veldig fornøyd med Lunas klipp. Anbefaler alle å reise til Agrolife Mysen og Torild :)", author: "Åse F" },
-  { service: "Klipp Liten hund max 9Kg", time: "2 år siden", text: "Veldig fornøyd. Profesjonell klipp og hyggelig service. Kommer tilbake 😀👍", author: "Grethe I" },
-  { service: "Klipp Stor hund 20+ Kg", time: "2 år siden", text: "Veldig fornøyde, både hund og eier. 👍", author: "Tore M" },
-  { service: "Klipp Medium hund 10-20Kg", time: "2 år siden", text: "Bjarne blir alltid så fin, vi er kjempe fornøyd 🤩", author: "Cathe S" },
-  { service: "Klipp Medium hund 10-20Kg", time: "2 år siden", text: "Er så fornøyd med klippen til Luna. Kan virkelig anbefale denne hundefrisøren. Vi vil helt klart være en fast kunde.", author: "Åse F" },
-  { service: "Klipp Medium hund 10-20Kg", time: "2 år siden", text: "Veldig fornøyd. Hunden ble kjempefin. Hyggelig service. Er å anbefale 😀", author: "Grethe I" },
-  { service: "Klipp Liten hund max 9Kg", time: "2 år siden", text: "Kjempe hyggelig, flink med Klara, nydelig klipt og ganske rimelige priser. Anbefales på det varmeste!!", author: "Erik S" },
-  { service: "Klipp Liten hund max 9Kg", time: "2 år siden", text: "Veldig bra jobba. Hunden min ble super fin.", author: "Grethe I" },
-  { service: "Klipp Medium hund 10-20Kg", time: "2 år siden", text: "Innehaver strekker seg langt for å gi god service 😃😃😃", author: "Kari U" },
-  { service: "Klipp Medium hund 10-20Kg", time: "2 år siden", text: "Fantastisk sted. Hyggelig betjening og Luna ble kjempe fin. Så fornøyd at jeg bestilte ny time til henne om 3 mnd. Kan anbefales på det sterkeste 😊🐕", author: "Åse F" },
-  { service: "Napping liten hund", time: "2 år siden", text: "Napping av min petit basset. Kjempefornøyd med jobben.", author: "Geir A" },
-  { service: "Klipp Stor hund 20+ Kg", time: "2 år siden", text: "Både Theo og vi er strålende fornøyd med klipp, stell og bad. Kan virkelig anbefales :-) Du er flink Torild.", author: "Linda K" },
-  { service: "Kloklipp", time: "2 år siden", text: "Superfornøyd.", author: "Marie G" },
-  { service: "Klipp Stor hund 20+ Kg", time: "2 år siden", text: "Like fornøyd hver gang!", author: "Guro T" },
-  { service: "Kloklipp", time: "2 år siden", text: "Kjempeflink, hyggelig, god og bestemt med to «gale» småhunder, som ikke vil klippe klør 🫣🤗", author: "Synnøve W" },
-  { service: "Klipp Stor hund 20+ Kg", time: "2 år siden", text: "Anbefales!", author: "Christin B" },
-  { service: "Klipp Liten hund max 9Kg", time: "3 år siden", text: "Fantastisk ❤️🐶❤️", author: "Eva M" },
-  { service: "Kloklipp", time: "3 år siden", text: "Rask, flink og hun gjør opplevelsen på beste måte. Hunden Jacob er helt trygg der.", author: "Gunnar A" },
-  { service: "Kloklipp", time: "3 år siden", text: "Både Theo og jeg er veldig fornøyd :-)", author: "Linda K" },
-  { service: "Ansiktstuss", time: "3 år siden", text: "Kjempe koselig å komme dit. Bare blide og hyggelig betjening. Helt flott arbeid og behandling av min hund. Takk.", author: "Irene S" },
-  { service: "Klipp Liten hund max 9Kg", time: "3 år siden", text: "Veldig fornøyd med resultatet. Bra pris og hyggelig service.", author: "Grethe I" },
-  { service: "Klipp Liten hund max 9Kg", time: "3 år siden", text: "Hyggelig, blid og dyktig frisør som egentlig er for rimelig!! 😃😃👍", author: "Erik S" },
-  { service: "Klipp Liten hund max 9Kg", time: "3 år siden", text: "Superfornøyd som alltid! Anbefales på det varmeste.", author: "Mari K" },
-  { service: "Bad/Føn Stor hund 20+ Kg", time: "3 år siden", text: "Bella ble kjempefin!", author: "Guro T" },
-  { service: "Kloklipp", time: "3 år siden", text: "Torild er superflink med hunder, Xeno er veldig fornøyd når han kommer til behandling i butikken til Torild.", author: "Marie G" },
-  { service: "Napping liten hund", time: "3 år siden", text: "Alltid fornøyd og Alf er kjempe trygg sammen med Torild 🥰", author: "Laila" },
-  { service: "Bad/Føn Stor hund 20+ Kg", time: "3 år siden", text: "Veldig bra! Hyggelige begge som jobber der! Og Stella kom ut som en ny hund, glad og fornøyd ❤️", author: "Stine S" },
-  { service: "Klipp Liten hund max 9Kg", time: "3 år siden", text: "Kjempefornøyd med Agrolife! Valpen koser seg og Torild er bare så behagelig. Gleder oss til neste besøk! Supre priser også.", author: "Serian J" },
-  { service: "Napping liten hund", time: "3 år siden", text: "Super fornøyd hver gang og koselige jenter som jobber der. Anbefales.", author: "Laila" },
-  { service: "Kloklipp", time: "3 år siden", text: "Torild er dyktig, serviceinnstilt, alltid blid og hyggelig.", author: "Gunnar A" },
-  { service: "Klipp Stor hund 20+ Kg", time: "3 år siden", text: "Veldig fornøyd med klipp og stell 🥰", author: "Linda K" },
-  { service: "Klipp Liten hund max 9Kg", time: "3 år siden", text: "Alltid fantastisk opplevelse her! Valpen vår elsker Torild og hun ser jo ut som en superstar når hun er ferdig. Torild er så kunnskapsrik og betryggende, vi anbefaler henne på det sterkeste.", author: "Serian J" },
-  { service: "Kloklipp", time: "3 år siden", text: "Hunden Jacob trives hos Torild.", author: "Gunnar A" },
-  { service: "Klipp Medium hund 10-20Kg", time: "3 år siden", text: "Helt fantastisk flott opplevelse 🥳💐🐶❤️", author: "May E" },
-  { service: "Klipp Liten hund max 9Kg", time: "3 år siden", text: "Fornøyd – som alltid.", author: "Eva M" },
-  { service: "Kloklipp", time: "3 år siden", text: "Det er alltid hyggelig å komme dit. Super service.", author: "Gunnar A" },
-  { service: "Klipp Liten hund max 9Kg", time: "3 år siden", text: "Blir kjempegodt ivaretatt ☺️ alltid glad hund som hentes.", author: "Kjerstin K" },
-  { service: "Klipp Medium hund 10-20Kg", time: "3 år siden", text: "Superfornøyd Pepper og eier. Deilig å få av vinterpelsen.", author: "Ann M" },
-  { service: "Klipp Medium hund 10-20Kg", time: "3 år siden", text: "Superfornøyd Chili og eier. Deilig å få av vinterpelsen.", author: "Ann M" },
-  { service: "Klipp Liten hund max 9Kg", time: "3 år siden", text: "Kjempekoselig opplevelse med Agrolife. Valpen hadde det kjempefint, og fikk en helt strålende klipp. Frisøren tok seg god tid og ble godt kjent med valpen, noe som betrygget oss. Vi kommer tilbake for en ny stuss om ikke så lenge. Anbefaler på det høyeste.", author: "Serian J" },
-  { service: "Kloklipp", time: "3 år siden", text: "Dyktig. Gir gode råd. Topp sted for hund og eier.", author: "Gunnar A" },
-  { service: "Kloklipp", time: "3 år siden", text: "Strålende! Peppers kloklipp gikk som en drøm!", author: "Ann M" },
-  { service: "Kloklipp", time: "3 år siden", text: "Strålende! Chilis kloklipp gikk som en drøm!", author: "Ann M" },
-  { service: "Kloklipp", time: "3 år siden", text: "Alltid fornøyd!!", author: "Stine M" },
-  { service: "Poteklipp", time: "3 år siden", text: "Alltid hyggelig å få ordnet dyra her! Anbefales på det sterkeste.", author: "Siv K" },
-  { service: "Kloklipp", time: "3 år siden", text: "Kjempefornøyd som alltid ❤️", author: "Eva M" },
-  { service: "Kloklipp", time: "3 år siden", text: "Går lekende lett. Hunden føler seg trygg.", author: "Brian J" },
-  { service: "Ansiktstuss", time: "4 år siden", text: "God 👍", author: "Runar S" },
-  { service: "Poteklipp", time: "4 år siden", text: "Alltid like fornøyd! 🥰", author: "Stine M" },
-  { service: "Kloklipp", time: "4 år siden", text: "Finnes ikke noen bedre 😀", author: "Gunnar A" },
+  { service: "Klasse B", time: "4 dager siden", text: "Bestod førerprøven på første forsøk! Rolig og dyktig lærer som virkelig tar seg tid og forklarer godt.", author: "Mathea S" },
+  { service: "Klasse B", time: "1 uke siden", text: "Veldig fornøyd. Følte meg trygg fra første kjøretime, og fikk god oppfølging hele veien.", author: "Jonas H" },
+  { service: "Trafikalt grunnkurs", time: "2 uker siden", text: "Engasjerende kurs som gjorde teorien lett å forstå. Anbefales!", author: "Emilie R" },
+  { service: "Klasse B", time: "3 uker siden", text: "Tålmodig og flink trafikklærer. Forklarte ting på en måte som var lett å skjønne.", author: "Sander L" },
+  { service: "Motorsykkel A2", time: "en måned siden", text: "Solid MC-opplæring med fokus på sikkerhet. Lærte utrolig mye på kort tid.", author: "Henrik B" },
+  { service: "Klasse B", time: "en måned siden", text: "Topp service og god stemning i bilen. Ble en mye tryggere sjåfør av å kjøre her.", author: "Nora K" },
+  { service: "Klasse B (automat)", time: "2 måneder siden", text: "Eleven i fokus stemmer virkelig. De tilpasset tempoet helt etter meg.", author: "Tobias A" },
+  { service: "Sikkerhetskurs på bane", time: "2 måneder siden", text: "Lærerikt og litt skummelt på en god måte – nå vet jeg hvordan bilen oppfører seg på glatt føre.", author: "Amalie F" },
+  { service: "Klasse B", time: "3 måneder siden", text: "Anbefaler BS Trafikkskole på det varmeste. Profesjonelle og hyggelige hele veien.", author: "Marcus D" },
+  { service: "Klasse BE (tilhenger)", time: "4 måneder siden", text: "Effektivt opplegg og god planlegging. Fikk førerkortet uten unødvendige ekstratimer.", author: "Ingrid V" },
+  { service: "Moped AM146", time: "5 måneder siden", text: "Kjekt og trygt kurs. Sønnen min koste seg og lærte masse.", author: "Camilla T" },
+  { service: "Klasse B", time: "6 måneder siden", text: "Beste avgjørelsen å velge en lokal skole. God lokalkunnskap før oppkjøringen.", author: "Oliver N" },
 ];
 
 /* ---------- Helpers ---------- */
@@ -159,13 +76,13 @@ const fmtPrice = (n) => n.toLocaleString("no-NO") + " kr";
 const DOW = ["søn", "man", "tir", "ons", "tor", "fre", "lør"];
 const MON = ["jan", "feb", "mar", "apr", "mai", "jun", "jul", "aug", "sep", "okt", "nov", "des"];
 
-/* Pseudo-random but stable "next available" label per service */
+/* Pseudo-tilfeldig, men stabil "neste ledige"-tekst per tjeneste */
 function nextTimeLabel(idx) {
-  const opts = ["I morgen 14:00", "ons 02.09. 09:00", "tir 08.09. 09:00", "I dag 15:30", "tor 04.09. 11:00"];
+  const opts = ["I morgen 14:00", "ons 09:00", "tir 16:30", "I dag 15:30", "tor 11:00", "man 17:00"];
   return opts[idx % opts.length];
 }
 
-/* Generate a list of upcoming open days (skip Sundays) */
+/* Liste over kommende åpne dager (hopper over søndager) */
 function upcomingDays(count = 10) {
   const days = [];
   const d = new Date();
@@ -176,17 +93,17 @@ function upcomingDays(count = 10) {
   return days;
 }
 
-/* Deterministic available time slots for a given day + service */
+/* Deterministiske ledige klokkeslett for en gitt dag + tjeneste */
 function slotsFor(date, service) {
-  const base = ["09:00", "10:00", "11:00", "12:30", "13:30", "14:30", "15:30"];
-  // Use date + service to deterministically drop some slots (simulate bookings)
+  const base = ["08:00", "09:00", "10:00", "11:30", "13:00", "14:30", "16:00", "17:30"];
   const seed = date.getDate() + date.getMonth() * 31 + service.id.length * 7;
   return base.filter((_, i) => (seed + i * 3) % 4 !== 0);
 }
 
-/* ---------- Render: services section ---------- */
+/* ---------- Render: tjenester/priser (kun på klasser.html) ---------- */
 function renderServices() {
   const root = $("#services-list");
+  if (!root) return;
   let idx = 0;
   root.innerHTML = SERVICE_GROUPS.map((group) => {
     const cards = group.services
@@ -206,14 +123,15 @@ function renderServices() {
         </article>`;
       })
       .join("");
-    return `<div class="service-group"><h3>${group.name}</h3><div class="service-cards">${cards}</div></div>`;
+    return `<div class="service-group" id="${group.id}"><h3>${group.name}</h3><div class="service-cards">${cards}</div></div>`;
   }).join("");
 }
 
-/* ---------- Render: reviews ---------- */
-const REVIEWS_INITIAL = 12;
+/* ---------- Render: omtaler (kun der #reviews-list finnes) ---------- */
+const REVIEWS_INITIAL = 6;
 function renderReviews() {
   const root = $("#reviews-list");
+  if (!root) return;
   root.innerHTML = REVIEWS.map((r, i) => `
     <div class="review ${i >= REVIEWS_INITIAL ? "is-hidden" : ""}">
       <span class="review-service">${r.service}</span>
@@ -222,10 +140,11 @@ function renderReviews() {
         <span class="review-time">${r.time}</span>
       </div>
       <p class="review-text">${r.text}</p>
-      <div class="review-meta"><span class="review-author">${r.author}</span> · Utøver Torild</div>
+      <div class="review-meta"><span class="review-author">${r.author}</span> · Elev hos BS Trafikkskole</div>
     </div>`).join("");
 
   const toggle = $("#reviews-toggle");
+  if (!toggle) return;
   let expanded = false;
   toggle.addEventListener("click", () => {
     expanded = !expanded;
@@ -238,7 +157,7 @@ function renderReviews() {
 }
 
 /* =========================================================
-   Booking system
+   Bookingsystem
    ========================================================= */
 const booking = { step: 1, service: null, date: null, time: null, customer: {}, payMethod: "card", paymentInfo: null };
 
@@ -253,7 +172,7 @@ function openBooking(serviceId) {
   booking.customer = {};
   booking.payMethod = "card";
   booking.paymentInfo = null;
-  if (booking.service) booking.step = 2; // jump straight to time pick if service preselected
+  if (booking.service) booking.step = 2; // hopp rett til tidsvalg om kurs er forhåndsvalgt
   modal.classList.add("is-open");
   modal.setAttribute("aria-hidden", "false");
   document.body.style.overflow = "hidden";
@@ -279,7 +198,7 @@ function summaryBanner() {
   if (!s) return "";
   const when = booking.date && booking.time
     ? `${DOW[booking.date.getDay()]} ${String(booking.date.getDate()).padStart(2, "0")}.${MON[booking.date.getMonth()]} kl. ${booking.time}`
-    : `${fmtPrice(s.price)} · ca. ${s.duration} min`;
+    : `${fmtPrice(s.price)} · ${s.length}`;
   return `
     <div class="bk-summary">
       <div>
@@ -300,14 +219,14 @@ function renderStep() {
   body.parentElement.scrollTop = 0;
 }
 
-/* Step 1 – choose service */
+/* Steg 1 – velg kurs/kjøretime */
 function renderServiceStep() {
   const groups = SERVICE_GROUPS.map((g) => {
     const items = g.services.map((s) => `
       <button class="bk-service ${booking.service && booking.service.id === s.id ? "is-selected" : ""}" data-pick-service="${s.id}">
         <span>
           <span class="bk-service-name">${s.name}</span><br>
-          <span class="bk-service-meta">ca. ${s.duration} min</span>
+          <span class="bk-service-meta">${s.length}</span>
         </span>
         <span class="bk-service-price">${fmtPrice(s.price)}</span>
       </button>`).join("");
@@ -315,12 +234,12 @@ function renderServiceStep() {
   }).join("");
 
   body.innerHTML = `
-    <h3 class="step-title">Velg tjeneste</h3>
-    <p class="step-sub">Hva trenger din firbente venn i dag?</p>
+    <h3 class="step-title">Velg kurs eller kjøretime</h3>
+    <p class="step-sub">Hva ønsker du å booke i dag?</p>
     ${groups}`;
 }
 
-/* Step 2 – choose date + time */
+/* Steg 2 – velg dato + tid */
 function renderTimeStep() {
   const days = upcomingDays(10);
   if (!booking.date) booking.date = days[0];
@@ -341,8 +260,8 @@ function renderTimeStep() {
     : `<p class="bk-no-times">Ingen ledige tider denne dagen – prøv en annen dato.</p>`;
 
   body.innerHTML = `
-    <h3 class="step-title">Velg tid</h3>
-    <p class="step-sub">Ledige tider hos Torild.</p>
+    <h3 class="step-title">Velg tidspunkt</h3>
+    <p class="step-sub">Ledige tider hos BS Trafikkskole.</p>
     ${summaryBanner()}
     <div class="bk-dates">${dateBtns}</div>
     <div class="bk-times">${timesHtml}</div>
@@ -352,7 +271,7 @@ function renderTimeStep() {
     </div>`;
 }
 
-/* Step 3 – customer details */
+/* Steg 3 – elevopplysninger */
 function renderDetailsStep() {
   const c = booking.customer;
   body.innerHTML = `
@@ -375,12 +294,12 @@ function renderDetailsStep() {
       <span class="bk-error">Ugyldig e-postadresse.</span>
     </div>
     <div class="bk-field">
-      <label for="f-dog">Hundens navn &amp; rase</label>
-      <input id="f-dog" type="text" value="${c.dog || ""}" placeholder="f.eks. Nanna, bichon havanais" />
+      <label for="f-birthyear">Fødselsår (valgfritt)</label>
+      <input id="f-birthyear" type="text" inputmode="numeric" value="${c.birthYear || ""}" placeholder="f.eks. 2008" maxlength="4" />
     </div>
     <div class="bk-field">
-      <label for="f-note">Melding til frisøren (valgfritt)</label>
-      <textarea id="f-note" placeholder="Floker, spesielle hensyn, ønsker ...">${c.note || ""}</textarea>
+      <label for="f-note">Melding til trafikklæreren (valgfritt)</label>
+      <textarea id="f-note" placeholder="F.eks. ønsker automatgir, har kjørt litt fra før, spesielle hensyn ...">${c.note || ""}</textarea>
     </div>
     <div class="bk-nav">
       <button class="btn btn-ghost" data-goto="2">Tilbake</button>
@@ -404,7 +323,7 @@ function validateDetails() {
 
   booking.customer = {
     name, phone, email,
-    dog: $("#f-dog").value.trim(),
+    birthYear: $("#f-birthyear").value.trim(),
     note: $("#f-note").value.trim(),
   };
   return ok;
@@ -435,7 +354,7 @@ function luhnOk(num) {
   return sum % 10 === 0;
 }
 
-/* Step 4 – payment */
+/* Steg 4 – betaling */
 function renderPaymentStep() {
   const s = booking.service;
   const tabs = PAY_METHODS.map((m) => `
@@ -579,13 +498,13 @@ function processPayment() {
   setTimeout(renderConfirmStep, 1100);
 }
 
-/* Step 5 – confirmation */
+/* Steg 5 – bekreftelse */
 function renderConfirmStep() {
   const s = booking.service;
   const c = booking.customer;
   const pi = booking.paymentInfo;
   const when = `${DOW[booking.date.getDay()]} ${String(booking.date.getDate()).padStart(2, "0")}.${MON[booking.date.getMonth()]}.${booking.date.getFullYear()} kl. ${booking.time}`;
-  const ref = "AGM-" + Math.random().toString(36).slice(2, 7).toUpperCase();
+  const ref = "BST-" + Math.random().toString(36).slice(2, 7).toUpperCase();
   const paidWith = pi
     ? `${pi.method}${pi.last4 ? " •••• " + pi.last4 : ""} ✓`
     : "Betalt ✓";
@@ -598,13 +517,11 @@ function renderConfirmStep() {
     <div class="bk-confirm">
       <div class="bk-check">✓</div>
       <h3 class="step-title">Timen er booket!</h3>
-      <p class="step-sub">Takk, ${c.name.split(" ")[0]}! Vi gleder oss til å ta imot ${c.dog ? c.dog : "dere"}.</p>
+      <p class="step-sub">Takk, ${c.name.split(" ")[0]}! Vi gleder oss til å se deg.</p>
       <div class="bk-receipt">
-        <div class="bk-receipt-row"><span class="lbl">Tjeneste</span><span class="val">${s.name}</span></div>
+        <div class="bk-receipt-row"><span class="lbl">Kurs / time</span><span class="val">${s.name}</span></div>
         <div class="bk-receipt-row"><span class="lbl">Tid</span><span class="val">${when}</span></div>
-        <div class="bk-receipt-row"><span class="lbl">Utøver</span><span class="val">Torild</span></div>
-        <div class="bk-receipt-row"><span class="lbl">Sted</span><span class="val">Meieriveien 2, Mysen</span></div>
-        ${c.dog ? `<div class="bk-receipt-row"><span class="lbl">Hund</span><span class="val">${c.dog}</span></div>` : ""}
+        <div class="bk-receipt-row"><span class="lbl">Sted</span><span class="val">Folkenborgveien 2, Mysen</span></div>
         <div class="bk-receipt-row"><span class="lbl">Betalt med</span><span class="val">${paidWith}</span></div>
         <div class="bk-receipt-row"><span class="lbl">Referanse</span><span class="val" id="confirm-ref">${ref}</span></div>
         <div class="bk-receipt-row"><span class="lbl">Beløp</span><span class="val bk-receipt-total">${fmtPrice(s.price)}</span></div>
@@ -621,7 +538,7 @@ function renderConfirmStep() {
     when,
     reference: ref,
     paymentMethod: paidWith,
-    customer: { name: c.name, email: c.email, phone: c.phone, dog: c.dog, note: c.note },
+    customer: { name: c.name, email: c.email, phone: c.phone, birthYear: c.birthYear, note: c.note },
   });
 }
 
@@ -652,12 +569,29 @@ function sendConfirmation(data) {
     });
 }
 
-/* ---------- Event delegation ---------- */
+/* ---------- Mobilmeny ---------- */
+function setupNavToggle() {
+  const toggle = document.querySelector("[data-nav-toggle]");
+  if (!toggle) return;
+  toggle.addEventListener("click", () => {
+    const open = document.body.classList.toggle("nav-open");
+    toggle.setAttribute("aria-expanded", open ? "true" : "false");
+  });
+  // Lukk menyen når en lenke klikkes
+  document.querySelectorAll(".main-nav a").forEach((a) =>
+    a.addEventListener("click", () => {
+      document.body.classList.remove("nav-open");
+      toggle.setAttribute("aria-expanded", "false");
+    })
+  );
+}
+
+/* ---------- Hendelsesdelegering ---------- */
 document.addEventListener("click", (e) => {
   const t = e.target.closest("[data-book-open], [data-book-close], [data-pick-service], [data-pick-date], [data-pick-time], [data-goto], [data-next], [data-submit-details], [data-pay-method], [data-pay-card], [data-pay-wallet]");
   if (!t) return;
 
-  if (t.hasAttribute("data-book-open")) { openBooking(t.dataset.service); return; }
+  if (t.hasAttribute("data-book-open")) { document.body.classList.remove("nav-open"); openBooking(t.dataset.service); return; }
   if (t.hasAttribute("data-book-close")) { closeBooking(); return; }
 
   if (t.hasAttribute("data-pick-service")) {
@@ -696,6 +630,8 @@ document.addEventListener("keydown", (e) => {
 /* ---------- Init ---------- */
 renderServices();
 renderReviews();
-$("#year").textContent = new Date().getFullYear();
+setupNavToggle();
+const yearEl = document.getElementById("year");
+if (yearEl) yearEl.textContent = new Date().getFullYear();
 // Tell sidebesøk (feiler stille uten backend)
 fetch("/api/track", { method: "POST" }).catch(() => {});

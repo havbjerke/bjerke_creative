@@ -1,8 +1,8 @@
 {
-  "name": "agrolife-mysen",
+  "name": "bs-trafikkskole",
   "version": "1.0.0",
   "private": true,
-  "description": "Nettside med innebygd bookingsystem og bekreftelsesmail for Agrolife Mysen Dyrebutikk & Hundefrisør",
+  "description": "Nettside med innebygd bookingsystem og bekreftelsesmail for BS Trafikkskole, Mysen",
   "engines": {
     "node": ">=18"
   }

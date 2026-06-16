@@ -3,7 +3,7 @@
 
 const { randomUUID } = require("crypto");
 const kv = require("../lib/kv");
-const { sendEmail, customerHtml, salonHtml } = require("../lib/email");
+const { sendEmail, customerHtml, schoolHtml } = require("../lib/email");
 
 module.exports = async (req, res) => {
   if (req.method !== "POST") {
@@ -16,7 +16,7 @@ module.exports = async (req, res) => {
     if (!service) return res.status(400).json({ error: "Mangler tjeneste" });
 
     const id = randomUUID();
-    const reference = "AGM-" + id.slice(0, 5).toUpperCase();
+    const reference = "BST-" + id.slice(0, 5).toUpperCase();
     const booking = {
       id, reference, service,
       price: typeof price === "number" ? price : null,
@@ -25,7 +25,7 @@ module.exports = async (req, res) => {
         name: customer.name || "",
         email: customer.email || "",
         phone: customer.phone || "",
-        dog: customer.dog || "",
+        birthYear: customer.birthYear || "",
         note: customer.note || "",
       },
       paymentMethod: paymentMethod || null,
@@ -42,15 +42,16 @@ module.exports = async (req, res) => {
     }
 
     // Send e-post (best effort)
-    const from = process.env.MAIL_FROM || "Agrolife Mysen <onboarding@resend.dev>";
+    const from = process.env.MAIL_FROM || "BS Trafikkskole <onboarding@resend.dev>";
+    const schoolEmail = process.env.SCHOOL_EMAIL || process.env.SALON_EMAIL;
     let emailed = false;
     try {
       if (booking.customer.email) {
-        await sendEmail({ from, to: booking.customer.email, subject: `Bekreftelse: ${service} hos Agrolife Mysen`, html: customerHtml(booking) });
+        await sendEmail({ from, to: booking.customer.email, subject: `Bekreftelse: ${service} hos BS Trafikkskole`, html: customerHtml(booking) });
         emailed = true;
       }
-      if (process.env.SALON_EMAIL) {
-        await sendEmail({ from, to: process.env.SALON_EMAIL, subject: `Ny booking: ${service} – ${booking.customer.name}`, html: salonHtml(booking) });
+      if (schoolEmail) {
+        await sendEmail({ from, to: schoolEmail, subject: `Ny booking: ${service} – ${booking.customer.name}`, html: schoolHtml(booking) });
       }
     } catch (e) { /* e-postfeil skal ikke blokkere bookingen */ }
 

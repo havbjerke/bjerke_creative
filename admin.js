@@ -1,4 +1,4 @@
-/* Admin-dashbord for Agrolife Mysen */
+/* Admin-dashbord for BS Trafikkskole */
 const $ = (s, r = document) => r.querySelector(s);
 const fmtPrice = (n) => (typeof n === "number" ? n.toLocaleString("no-NO") + " kr" : "—");
 
@@ -108,7 +108,7 @@ function renderBookings() {
   const list = ALL.filter((b) => {
     if (filter !== "alle" && (b.status || "ny") !== filter) return false;
     if (!query) return true;
-    const hay = `${b.customer?.name} ${b.customer?.dog} ${b.customer?.phone} ${b.customer?.email} ${b.service} ${b.reference}`.toLowerCase();
+    const hay = `${b.customer?.name} ${b.customer?.birthYear} ${b.customer?.phone} ${b.customer?.email} ${b.service} ${b.reference}`.toLowerCase();
     return hay.includes(query);
   });
 
@@ -124,7 +124,7 @@ function renderBookings() {
     const meta = [
       c.phone ? `📞 <a href="tel:${c.phone}">${c.phone}</a>` : "",
       c.email ? `✉️ <a href="mailto:${c.email}">${c.email}</a>` : "",
-      c.dog ? `🐶 ${esc(c.dog)}` : "",
+      c.birthYear ? `🎂 ${esc(c.birthYear)}` : "",
       b.paymentMethod ? `💳 ${esc(b.paymentMethod)}` : "",
     ].filter(Boolean).join("");
     const actions = status === "ny"

@@ -34,9 +34,9 @@ module.exports = async (req, res) => {
       if (booking.customer && booking.customer.email) {
         try {
           await sendEmail({
-            from: process.env.MAIL_FROM || "Agrolife Mysen <onboarding@resend.dev>",
+            from: process.env.MAIL_FROM || "BS Trafikkskole <onboarding@resend.dev>",
             to: booking.customer.email,
-            subject: action === "accept" ? "Timen din er bekreftet – Agrolife Mysen" : "Timen din er avlyst – Agrolife Mysen",
+            subject: action === "accept" ? "Timen din er bekreftet – BS Trafikkskole" : "Timen din er avlyst – BS Trafikkskole",
             html: statusHtml(booking, action),
           });
         } catch (e) { /* ignorer */ }

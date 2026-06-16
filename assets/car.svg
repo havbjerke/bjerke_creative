@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320" role="img" aria-label="Bil med L-skilt">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e4eefb"/>
+      <stop offset="1" stop-color="#d3e2f6"/>
+    </linearGradient>
+    <linearGradient id="body" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2f6fc4"/>
+      <stop offset="1" stop-color="#1b4a86"/>
+    </linearGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#cfe6ff"/>
+      <stop offset="1" stop-color="#a9cdf0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- backdrop -->
+  <circle cx="160" cy="160" r="156" fill="url(#bg)"/>
+
+  <!-- road -->
+  <path d="M30 232 H290" stroke="#9fb6d4" stroke-width="6" stroke-linecap="round"/>
+  <path d="M52 232 h26 M118 232 h26 M184 232 h26 M250 232 h22" stroke="#fff" stroke-width="6" stroke-linecap="round"/>
+
+  <!-- car body -->
+  <path d="M58 206 C58 184 70 176 88 174 L108 142 C114 132 124 126 136 126 H206
+           C220 126 232 134 238 146 L252 174 C272 178 286 188 286 206 L286 214
+           C286 220 281 224 275 224 H69 C63 224 58 220 58 214 Z"
+        fill="url(#body)"/>
+
+  <!-- windows -->
+  <path d="M118 146 C121 140 127 138 134 138 H168 V170 H106 Z" fill="url(#glass)"/>
+  <path d="M178 138 H202 C209 138 215 142 219 148 L230 170 H178 Z" fill="url(#glass)"/>
+
+  <!-- door line + handle -->
+  <path d="M170 138 V170" stroke="#16407a" stroke-width="3" opacity=".5"/>
+  <rect x="150" y="184" width="22" height="6" rx="3" fill="#0f3568" opacity=".6"/>
+
+  <!-- headlight -->
+  <ellipse cx="278" cy="196" rx="9" ry="7" fill="#ffe39b"/>
+
+  <!-- wheels -->
+  <circle cx="108" cy="224" r="28" fill="#243447"/>
+  <circle cx="108" cy="224" r="12" fill="#cdd7e4"/>
+  <circle cx="236" cy="224" r="28" fill="#243447"/>
+  <circle cx="236" cy="224" r="12" fill="#cdd7e4"/>
+
+  <!-- L plate -->
+  <g transform="translate(160 90)">
+    <rect x="-26" y="-26" width="52" height="52" rx="10" fill="#fff" stroke="#d9d3c6" stroke-width="2"/>
+    <path d="M-7 -15 V13 H13" fill="none" stroke="#1b4a86" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>
