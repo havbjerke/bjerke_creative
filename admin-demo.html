@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin (DEMO) – Agrolife Mysen</title>
+  <meta name="robots" content="noindex" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="admin.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐾</text></svg>" />
+  <style>
+    .demo-flag{position:fixed;top:10px;left:50%;transform:translateX(-50%);z-index:20;
+      background:#d9893f;color:#fff;font-size:.76rem;font-weight:700;padding:.3rem .8rem;border-radius:999px;box-shadow:0 4px 14px rgba(0,0,0,.15)}
+  </style>
+</head>
+<body>
+  <div class="demo-flag">DEMO · eksempeldata</div>
+
+  <!-- Login -->
+  <div id="login" class="login-wrap">
+    <form class="login-card" id="login-form">
+      <div class="login-brand">🐾 Agrolife Mysen</div>
+      <h1>Adminpanel</h1>
+      <p class="login-sub">Logg inn for å se og styre bestillinger.</p>
+      <label for="pwd">Passord</label>
+      <input id="pwd" type="password" autocomplete="off" placeholder="••••••••" />
+      <button type="submit" class="btn btn-primary btn-block">Logg inn</button>
+      <p class="login-error" id="login-error"></p>
+      <p class="login-sub" style="margin-top:1rem;text-align:center">Demo-passord: <strong>demo</strong></p>
+    </form>
+  </div>
+
+  <!-- Dashboard -->
+  <div id="dash" class="dash" hidden>
+    <header class="dash-header">
+      <div class="dash-brand">🐾 Agrolife Mysen <span>· Admin (demo)</span></div>
+      <div class="dash-actions">
+        <button class="btn btn-ghost" id="refresh">↻ Oppdater</button>
+        <button class="btn btn-ghost" id="logout">Logg ut</button>
+      </div>
+    </header>
+    <main class="dash-main">
+      <section class="stat-grid" id="stat-grid"></section>
+      <section class="panel">
+        <h2>Besøk siste 14 dager</h2>
+        <div class="chart" id="chart"></div>
+      </section>
+      <section class="panel">
+        <div class="panel-head">
+          <h2>Bestillinger</h2>
+          <input id="search" class="search" type="search" placeholder="Søk navn, hund, telefon …" />
+        </div>
+        <div class="filters" id="filters">
+          <button class="filter is-active" data-filter="alle">Alle</button>
+          <button class="filter" data-filter="ny">Nye</button>
+          <button class="filter" data-filter="akseptert">Aksepterte</button>
+          <button class="filter" data-filter="kansellert">Kansellerte</button>
+        </div>
+        <div id="bookings" class="bookings"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="admin-demo.js"></script>
+</body>
+</html>
